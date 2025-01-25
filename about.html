@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>About</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				padding: 20px;
+			}
+			.version-info {
+				margin-bottom: 10px;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>About This App</h1>
+		<div class="version-info">
+			<strong>Version:</strong>
+			<span id="app-version"></span>
+		</div>
+		<div class="version-info">
+			<strong>Electron:</strong>
+			<span id="electron-version"></span>
+		</div>
+		<div class="version-info">
+			<strong>Chromium:</strong>
+			<span id="chromium-version"></span>
+		</div>
+		<div class="version-info">
+			<strong>Node.js:</strong>
+			<span id="node-version"></span>
+		</div>
+		<div class="version-info">
+			<strong>V8:</strong>
+			<span id="v8-version"></span>
+		</div>
+		<div class="version-info">
+			<strong>OS:</strong>
+			<span id="os"></span>
+		</div>
+
+		<script>
+			document.getElementById("app-version").innerText = window.versions.appVersion;
+			document.getElementById("electron-version").innerText = window.versions.electronVersion;
+			document.getElementById("chromium-version").innerText = window.versions.chromiumVersion;
+			document.getElementById("node-version").innerText = window.versions.nodeVersion;
+			document.getElementById("v8-version").innerText = window.versions.v8Version;
+			document.getElementById("os").innerText = window.versions.os;
+		</script>
+	</body>
+</html>

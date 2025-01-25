@@ -1,0 +1,11 @@
+.plugin-test-button {
+	background-color: none;
+	border-radius: var(--border-radius-1);
+	border: var(--border);
+	padding: 0 10px;
+	margin: 4px;
+}
+.plugin-test-button:hover {
+	background-color: var(--accent-color);
+	cursor: pointer;
+}

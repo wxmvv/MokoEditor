@@ -1,0 +1,21 @@
+{
+	"name": "CyperSpace",
+	"folders": [
+		{
+			"name": "markdownTest",
+			"path": "/Users/wxm/test/markdownTest"
+		}
+		// {
+		// 	"name": "manager",
+		// 	"path": "../manager"
+		// },
+		// {
+		// 	"name": "components",
+		// 	"path": "../components"
+		// }
+	],
+	"settings": {},
+	"compounds": {},
+	"launch": {},
+	"extensions": {}
+}

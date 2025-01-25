@@ -1,0 +1,8 @@
+/* .tool-bar-item */
+.editor-button-group {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 4px;
+	gap: 4px;
+}

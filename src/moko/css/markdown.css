@@ -1,0 +1,27 @@
+.md-h1 {
+	/* font-size: 1.5rem;
+	font-weight: bold;
+	margin: 0.67rem 0;
+	font-family: "monospace"; */
+}
+
+.md-h2 {
+	/* font-size: 1.25rem;
+	font-weight: bold;
+	margin: 0.83rem 0; */
+}
+
+.md-h3 {
+	/* font-size: 1rem;
+	font-weight: bold;
+	margin: 1rem 0; */
+}
+
+.md-h4 {
+	/* font-size: 0.875rem;
+	font-weight: bold;
+	margin: 1.33rem 0; */
+}
+
+.md-h5 {
+}

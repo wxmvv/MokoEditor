@@ -1,0 +1,204 @@
+/* rct-tree-item-li rct-tree-item-li-isFolder rct-tree-item-li-selected rct-tree-item-li-expanded rct-tree-item-li-focused */
+body {
+	/* body { */
+	/* --rct-color-tree-bg: #f6f8fa; */
+	/* --rct-color-tree-bg: var(--tree-nonfocustree-item-selected); */
+	--rct-color-tree-bg: var(--background-primary);
+	/* --rct-color-tree-focus-outline: #0366d6; */
+	/* --rct-color-tree-focus-outline: var(--tree-outline); */
+	--rct-color-tree-focus-outline: transparent;
+
+	--rct-color-focustree-item-selected-bg: var(--tree-item-background-selected);
+	--rct-color-focustree-item-selected-text: inherit;
+	/* --rct-color-focustree-item-focused-border: #0366d6; */
+	/* --rct-color-focustree-item-focused-border: var(--tree-item-border-color-focused); */
+	--rct-color-focustree-item-focused-border: var(--tree-item-border-color-focused);
+	--rct-color-focustree-item-draggingover-bg: var(--tree-item-background-selected);
+	--rct-color-focustree-item-draggingover-color: inherit;
+
+	/* --rct-color-nonfocustree-item-selected-bg: #e8eaed; */
+	--rct-color-nonfocustree-item-selected-bg: var(--tree-nonfocustree-item-selected);
+	--rct-color-nonfocustree-item-selected-text: inherit;
+	--rct-color-nonfocustree-item-focused-border: var(--tree-item-border-color-focused);
+
+	--rct-color-search-highlight-bg: var(--tree-outline);
+	--rct-color-drag-between-line-bg: var(--tree-outline);
+	/* --rct-color-arrow: #373a3f; */
+	--rct-color-arrow: var(--tree-item-arrow-fill);
+
+	/* --rct-item-height: 24px; */
+	/* --rct-item-height: calc(1.715 * var(--UI-font-size)); */
+	--rct-item-height: calc(1.72 * var(--UI-font-size));
+
+	--rct-color-renaming-input-submitbutton-bg: inherit;
+	--rct-color-renaming-input-submitbutton-bg-hover: var(--tree-outline);
+	--rct-color-renaming-input-submitbutton-bg-active: var(--tree-outline);
+
+	--rct-color-renaming-input-submitbutton-text: inherit;
+	--rct-color-renaming-input-submitbutton-text-hover: var(--background-primary);
+	--rct-color-renaming-input-submitbutton-text-active: var(--background-primary);
+}
+
+.rct-tree-root {
+	font-family: sans-serif;
+	background-color: var(--rct-color-tree-bg);
+	padding: 0px; /* 总的边距 */
+}
+
+.rct-tree-root-focus {
+	outline: 1px solid var(--rct-color-tree-focus-outline);
+}
+
+.rct-tree-item-li {
+	/* font-size: 0.8rem; */
+	font-size: calc(0.915 * var(--UI-font-size));
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+/* MARK */
+.rct-tree-item-title-container {
+	display: flex;
+	align-items: center;
+	border-top: 1px solid transparent;
+	border-left: 1px solid transparent;
+	border-right: 1px solid transparent;
+	border-bottom: 1px solid transparent;
+	padding-left: var(--depthOffset, 0px);
+}
+.rct-tree-item-title-container:hover {
+	background-color: var(--rct-color-focustree-item-draggingover-bg);
+	cursor: pointer;
+}
+.rct-tree-item-li:hover {
+	cursor: pointer;
+}
+
+.rct-tree-child-list {
+}
+.rct-tree-item-button {
+	flex-grow: 1;
+	display: flex;
+	align-items: center;
+	align-content: center;
+	box-sizing: border-box;
+	background-color: transparent;
+	font-family: inherit;
+	font-size: inherit;
+	border: none;
+	width: 100%;
+	height: var(--rct-item-height);
+	text-align: left;
+	color: inherit;
+	outline: none;
+}
+
+.rct-tree-item-arrow {
+	/* 显示箭头 */
+	display: var(--tree-item-arrow-display);
+	width: 10px;
+}
+
+.rct-tree-item-arrow svg {
+	width: 10px;
+}
+
+.rct-tree-item-arrow-path {
+	fill: var(--rct-color-arrow);
+}
+
+.rct-tree-items-container {
+	margin: 0;
+	padding: 0;
+}
+
+.rct-tree-root:not(.rct-tree-root-focus) .rct-tree-item-title-container-selected {
+	background-color: var(--rct-color-nonfocustree-item-selected-bg);
+	color: var(--rct-color-nonfocustree-item-selected-text);
+}
+.rct-tree-root.rct-tree-root-focus .rct-tree-item-title-container-selected {
+	background-color: var(--rct-color-focustree-item-selected-bg);
+	color: var(--rct-color-focustree-item-selected-text);
+}
+.rct-tree-root.rct-tree-root-focus .rct-tree-item-title-container-focused {
+	outline: none;
+	/* border-left:#0366d6 1px solid; */
+	border-color: var(--rct-color-focustree-item-focused-border);
+}
+
+.rct-tree-root:not(.rct-tree-root-focus) .rct-tree-item-title-container-focused {
+	outline: none;
+	border-color: var(--rct-color-nonfocustree-item-focused-border);
+}
+/* .rct-tree-item-li:hover {
+	background-color: blue;
+} */
+
+.rct-tree-item-title-container-dragging-over {
+	background-color: var(--rct-color-focustree-item-draggingover-bg);
+	color: var(--rct-color-focustree-item-draggingover-color);
+}
+
+.rct-tree-item-button-search-match {
+	font-style: italic;
+}
+
+.rct-tree-item-search-highlight {
+	background-color: var(--rct-color-search-highlight-bg);
+}
+
+.rct-tree-drag-between-line {
+	position: absolute;
+	right: 0;
+	top: -2px;
+	height: 4px;
+	background-color: var(--rct-color-drag-between-line-bg);
+}
+
+.rct-tree-drag-between-line-top {
+	top: 0;
+}
+
+.rct-tree-drag-between-line-bottom {
+	top: -4px;
+}
+
+.rct-tree-search-input-container {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 120px;
+}
+
+.rct-tree-search-input {
+	position: fixed;
+	width: 120px;
+}
+
+/* TODO see renaming form in multiple tree example, wraps around */
+.rct-tree-item-renaming-form {
+	flex-grow: 1;
+	display: flex;
+}
+.rct-tree-item-renaming-input {
+	flex-grow: 1;
+	background-color: inherit;
+	border: none;
+	color: inherit;
+	outline: none;
+}
+.rct-tree-item-renaming-submit-button {
+	border: none;
+	background-color: var(--rct-color-renaming-input-submitbutton-bg);
+	border-radius: 999px;
+	color: var(--rct-color-renaming-input-submitbutton-text);
+	cursor: pointer;
+}
+.rct-tree-item-renaming-submit-button:hover {
+	background-color: var(--rct-color-renaming-input-submitbutton-bg-hover);
+	color: var(--rct-color-renaming-input-submitbutton-text-hover);
+}
+.rct-tree-item-renaming-submit-button:active {
+	background-color: var(--rct-color-renaming-input-submitbutton-bg-active);
+	color: var(--rct-color-renaming-input-submitbutton-text-active);
+}

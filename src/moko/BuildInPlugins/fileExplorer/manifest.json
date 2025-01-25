@@ -1,0 +1,15 @@
+{
+	"id": "file-explorer",
+	"name": "File Explorer",
+	"version": "1.0.0",
+	"minAppVersion": "0.0.1",
+	"description": "Manges the files and folders in the current editor",
+	"author": "moko",
+	"authorUrl": "",
+	"fundingUrl": {
+		"Buy Me a Coffee": "https://buymeacoffee.com",
+		"GitHub Sponsor": "https://github.com/sponsors",
+		"Patreon": "https://www.patreon.com/"
+	},
+	"isDesktopOnly": false
+}

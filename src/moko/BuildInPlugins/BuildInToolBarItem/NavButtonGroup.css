@@ -1,0 +1,11 @@
+.nav-button-group {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	height: 100%;
+	padding: 4px;
+	gap: 0px;
+	border-bottom: var(--border);
+	background-color: var(--tab-bg);
+	box-shadow: var(--shadow-border-right);
+}

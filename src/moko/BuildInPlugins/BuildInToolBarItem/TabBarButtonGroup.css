@@ -1,0 +1,17 @@
+.tab-bar-button-group {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	height: 100%;
+	padding: 4px;
+	gap: 4px;
+	border-bottom: var(--border);
+	background-color: var(--tab-bg);
+	border-left: var(--border);
+}
+
+.new-file-button {
+}
+
+.zoom-button {
+}

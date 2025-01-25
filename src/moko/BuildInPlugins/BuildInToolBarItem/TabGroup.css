@@ -1,0 +1,127 @@
+.tab-group {
+	position: relative;
+	display: flex;
+	flex-grow: 1;
+	flex-direction: row;
+	align-self: flex-start;
+	align-items: center;
+	justify-self: flex-start;
+	justify-content: flex-start;
+	height: 100%;
+	overflow-x: scroll;
+	overflow-y: visible;
+	white-space: nowrap;
+	background-color: var(--tab-bar-bg);
+	border-bottom: none !important;
+	border-left: var(--border);
+}
+
+.tab-group::-webkit-scrollbar {
+	display: none;
+}
+
+.tab {
+	box-sizing: border-box;
+	position: relative;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: flex-start;
+	color: var(--label-secondary);
+	background-color: var(--tab-bg);
+	height: 100%;
+	font-family: "zed-sans";
+	font-size: var(--UI-font-size);
+	/* gap: 0px; */
+	/* padding-left: 4px; */
+	padding-right: 10px;
+	/* border-right: var(--border); */
+	border-right: 1px solid rgba(var(--gray-2-rgb), 0.5);
+	border-bottom: var(--border);
+}
+
+.tab-file-name {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: flex-start;
+	padding-left: 4px;
+	padding-right: 4px;
+	height: 100%;
+}
+
+/* 关闭按钮 */
+.tab-close-button {
+	position: relative;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-items: center;
+	width: var(--icon-width);
+	height: var(--icon-height);
+}
+
+/* .tab-close-button .svg  这个是关闭按钮*/
+/* .tab-close-button.modified::before 这个是修改圆点 */
+
+/* 修改指示点 */
+/*  */
+.tab-close-button.modified::before {
+	content: "";
+	position: absolute;
+	left: 40%;
+	width: 36%;
+	height: 36%;
+	border-radius: 50%;
+	background-color: green;
+	z-index: 1;
+}
+.tab-close-button.modified:hover::before {
+	display: none;
+}
+/* 关闭图标 */
+.tab-close-button.modified .svg {
+	opacity: 0;
+}
+.tab-close-button.modified:hover .svg {
+	opacity: 1;
+}
+
+/* 显示隐藏 */
+.tab-close-button {
+	padding: 4px;
+}
+.tab-close-button .svg {
+	padding: 2px;
+	color: transparent;
+}
+.tab:hover .tab-close-button .svg {
+	color: var(--label-secondary);
+}
+.tab.active .tab-close-button .svg {
+	color: var(--label-secondary);
+}
+.tab-close-button:hover .svg {
+	background-color: rgba(var(--gray-2-rgb), 0.5);
+}
+
+/* 选中 */
+.tab.active {
+	color: var(--label-primary);
+	position: relative;
+	background-color: var(--tab-active-bg);
+	/* border-top: var(--border); */
+	border-bottom: none;
+	z-index: 99;
+}
+.empty-tab {
+	content: "";
+	height: 100%;
+	min-width: 20px;
+	flex-grow: 1;
+	color: transparent;
+	border-right: none !important;
+	border-bottom: var(--border);
+	background-color: var(--tab-bg);
+	box-shadow: none;
+}

@@ -1,0 +1,93 @@
+{
+	"name": "moko",
+	"private": true,
+	"version": "0.0.1",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc -b && vite build",
+		"lint": "eslint .",
+		"preview": "vite preview",
+		"electron:start": "cross-env NODE_ENV=development electron .",
+		"electron:build": "tsc -b && vite build && cross-env NODE_ENV=production electron-builder"
+	},
+	"main": "electron.cjs",
+	"homepage": ".",
+	"build": {
+		"appId": "com.example.Moko",
+		"productName": "Moko",
+		"directories": {
+			"output": "electron-build"
+		},
+		"files": [
+			"app/**/*",
+			"app/**/**/*",
+			"electron.cjs",
+			"electron-menu.cjs",
+			"electron-preload.cjs"
+		],
+		"mac": {
+			"target": "dmg",
+			"icon": "build/icon.icns"
+		},
+		"win": {
+			"target": "nsis",
+			"icon": "build/icon.ico"
+		},
+		"linux": {
+			"target": "AppImage",
+			"icon": "build/icon.png"
+		}
+	},
+	"dependencies": {
+		"@capacitor/android": "^6.1.2",
+		"@capacitor/cli": "^6.1.2",
+		"@capacitor/core": "^6.1.2",
+		"@capacitor/ios": "^6.1.2",
+		"@codemirror/autocomplete": "^6.18.2",
+		"@codemirror/collab": "^6.1.1",
+		"@codemirror/commands": "^6.8.0",
+		"@codemirror/highlight": "^0.19.8",
+		"@codemirror/history": "^0.19.2",
+		"@codemirror/language": "^6.10.3",
+		"@codemirror/language-data": "^6.5.1",
+		"@codemirror/lint": "^6.8.2",
+		"@codemirror/search": "^6.5.7",
+		"@codemirror/state": "^6.5.1",
+		"@codemirror/theme-one-dark": "^6.1.2",
+		"@codemirror/view": "^6.36.2",
+		"@ddietr/codemirror-themes": "^1.4.4",
+		"chokidar": "^4.0.3",
+		"codemirror": "^6.0.1",
+		"fuse.js": "^7.0.0",
+		"json5": "^2.2.3",
+		"micromatch": "^4.0.8",
+		"react": "^18.3.1",
+		"react-complex-tree": "^2.4.6",
+		"react-dom": "^18.3.1",
+		"thememirror": "^2.0.1",
+		"ua-parser-js": "^2.0.0-beta.3"
+	},
+	"devDependencies": {
+		"@eslint/js": "^9.9.0",
+		"@types/react": "^18.3.3",
+		"@types/react-dom": "^18.3.0",
+		"@vitejs/plugin-react": "^4.3.1",
+		"cross-env": "^7.0.3",
+		"electron": "^34.0.1",
+		"electron-builder": "^25.1.8",
+		"electron-devtools-installer": "^3.2.1",
+		"eslint": "^9.10.0",
+		"eslint-plugin-react": "^7.35.2",
+		"eslint-plugin-react-hooks": "^5.1.0-rc.0",
+		"eslint-plugin-react-refresh": "^0.4.9",
+		"globals": "^15.9.0",
+		"obsidian": "^1.7.2",
+		"rollup-plugin-copy": "^3.5.0",
+		"typescript": "^5.5.3",
+		"typescript-eslint": "^8.0.1",
+		"vite": "^5.4.1",
+		"vite-plugin-static-copy": "^1.0.6",
+		"vite-plugin-svgr": "^4.2.0"
+	}
+}

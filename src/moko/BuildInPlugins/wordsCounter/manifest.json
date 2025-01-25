@@ -1,0 +1,15 @@
+{
+	"id": "words-counter",
+	"name": "Words Counter",
+	"version": "1.0.0",
+	"minAppVersion": "0.0.1",
+	"description": "Counts the number of words in the current editor",
+	"author": "moko",
+	"authorUrl": "",
+	"fundingUrl": {
+		"Buy Me a Coffee": "https://buymeacoffee.com",
+		"GitHub Sponsor": "https://github.com/sponsors",
+		"Patreon": "https://www.patreon.com/"
+	},
+	"isDesktopOnly": false
+}

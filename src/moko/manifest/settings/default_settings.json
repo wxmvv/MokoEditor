@@ -1,0 +1,100 @@
+{
+	// MARK electron Window
+	// vibrancy?: ( 'titlebar' | 'selection' | 'menu' | 'popover' | 'sidebar' | 'header' | 'sheet' | 'window' | 'hud' | 'fullscreen-ui' | 'tooltip' | 'content' | 'under-window' | 'under-page');
+	"window.vibrancy": null,
+	// visualEffectState?: ('followWindow' | 'active' | 'inactive');
+	"window.visualEffectState": "followWindow",
+	// alwaysOnTop?: boolean;
+	"window.alwaysOnTop": false,
+
+	// 是否始终聚焦新标签页，默认为 true，当你打开新标签页，立即切换标签页
+	"editor.alwaysFocusNewTab": true,
+
+	"files.autoSave": "afterDelay", //TODO
+	// MARK General
+	"auto_update": true,
+	"language": "en",  //TODO
+	// MARK Appearance
+	// `theme_mode` is one of:
+	// - "system": Use the theme that corresponds to the system's appearance
+	// - "light": Use the theme indicated by the "light" field
+	// - "dark": Use the theme indicated by the "dark" field
+	"theme_mode": "system",
+	"theme_light": "solarized",
+	"theme_dark": "mbo",
+	"accent_color": "#336bda",
+
+	"editor_font_family": "Zed Plex Mono",
+	"editor_font_size": 15,
+	"editor_font_weight": 400,
+	// Set the buffer's line height.
+	// May take 3 values:
+	//  1. Use a line height that's comfortable for reading (1.618)
+	//         "buffer_line_height": "comfortable"
+	//  2. Use a standard line height, (1.3)
+	//         "buffer_line_height": "standard",
+	//  3. Use a custom line height
+	//         "buffer_line_height": {
+	//           "custom": 2
+	//         },
+	"editor_line_height": "comfortable",
+	"ui_font_family": "Zed Plex Sans",
+	// The default font size for text in the UI
+	"ui_font_size": 16,
+	// The weight of the UI font in standard CSS units from 100 to 900.
+	"ui_font_weight": 400,
+
+	//MARK Editor
+	// Whether to enable vim modes and key bindings.
+	"vim_mode": false,
+	// The key to use for adding multiple cursors
+	"multi_cursor_modifier": "alt",
+	// How many columns a tab should occupy.
+	"tab_size": 4,
+	// 控制光标样式。
+	"cursor_style": "line",
+	// 自动关闭括号
+	// Whether to automatically add matching closing characters when typing
+	// opening parenthesis, bracket, brace, single or double quote characters.
+	// For example, when you type (, Zed will add a closing ) at the correct position.
+	"use_autoclose": true,
+	// 自动选中后
+	// Whether to automatically surround selected text when typing opening parenthesis,
+	// bracket, brace, single or double quote characters.
+	// For example, when you select text and type (, Zed will surround the text with ().
+	"use_auto_surround": true,
+
+	//MARK Files
+
+	// 控制具有未保存更改的编辑器的 [自动保存](https://code.visualstudio.com/docs/editor/codebasics#_save-auto-save)。
+	//  - off: 具有更改的编辑器永远不会自动保存。
+	//  - afterDelay: 在配置的 `files.autoSaveDelay` 之后，会自动保存具有更改的编辑器。
+	//  - onFocusChange: 当编辑器失去焦点时，会自动保存具有更改的编辑器。
+	//  - onWindowChange: 当窗口失去焦点时，会自动保存具有更改的编辑器。
+	"auto_save": "off",
+	// 控制自动保存具有未保存更改的编辑器之前的延迟(以毫秒为单位)。只有当 `files.autoSave` 设置为 `afterDelay` 时才适用。
+	"auto_save_delay": 1000,
+
+	"autoCloseTags": true,
+
+	"show_status_bar": true,
+
+	"workbench.activityBar.visible": true,
+
+	// 默认行尾字符。
+	//  - \n: LF
+	//  - \r\n: CRLF
+	//  - auto: 使用具体操作系统规定的行末字符。
+	"eol": "auto",
+
+	// 配置 [glob 模式](https://aka.ms/vscode-glob-patterns)以排除文件和文件夹。例如，文件资源管理器根据此设置决定要显示或隐藏的文件和文件夹。请参阅 `search.exclude#` 设置以定义特定于搜索的排除。请参阅 `#explorer.excludeGitIgnore` 设置以基于 `.gitignore` 忽略文件。
+	"exclude": {
+		"**/.git": true,
+		"**/.svn": true,
+		"**/.hg": true,
+		"**/CVS": true,
+		"**/.DS_Store": true,
+		"**/Thumbs.db": true
+	},
+	"file_scan_exclusions": ["**/.git", "**/.svn", "**/.hg", "**/CVS", "**/.DS_Store", "**/Thumbs.db", "**/.classpath", "**/.settings"]
+}

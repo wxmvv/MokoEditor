@@ -1,0 +1,37 @@
+{
+	"active_pane_id": "pane1",
+	"panes": [
+		{
+			"id": "pane1",
+			"viewType": "pane",
+			// "currentTabPath": "src/moko/initial/test.md", //当前激活的tab的path现在是一个没有的tab
+			// "currentTabPath": "src/app.ts",
+			// "currentTabPath": "src/moko/TODO.md",
+			"currentTabPath": "test",
+			"tabs": [
+				{
+					"name": "欢迎",
+					"path": "welcome"
+				},
+				{
+					"name": "TODO.md",
+					"path": "src/moko/TODO.md"
+				},
+				{
+					"name": "test",
+					"path": "test"
+				}
+				// {
+				// 	"name": "app.ts",
+				// 	"path": "src/app.ts"
+				// }
+				// {
+				// 	"name": "Workspace.js",
+				// 	"path": "src/moko/views/Workspace.js"
+				// }
+			]
+		}
+	],
+	"primary_siderbar": {},
+	"secondary_siderbar": {}
+}

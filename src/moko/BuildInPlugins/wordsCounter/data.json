@@ -1,0 +1,20 @@
+{
+    "todoPageName": "todo",
+    "showChecked": false,
+    "showAllTodos": false,
+    "autoRefresh": true,
+    "subGroups": false,
+    "groupBy": "page",
+    "sortDirectionItems": "new->old",
+    "sortDirectionGroups": "new->old",
+    "sortDirectionSubGroups": "new->old",
+    "includeFiles": "",
+    "lookAndFeel": "compact",
+    "_collapsedSections": [
+      "CodeLib ☁️/☁️ Code Lib.md",
+      "🗂️ Projects/舒白冥想小程序/舒白冥想-程序.md",
+      "🗂️ Projects/个人业务主页/个人业务主页.md",
+      "🗂️ Projects/重写公众号库/公众号相关库重写.md"
+    ],
+    "_hiddenTags": []
+  }

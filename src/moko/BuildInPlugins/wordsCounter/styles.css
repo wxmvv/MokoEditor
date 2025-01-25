@@ -1,0 +1,32 @@
+/* TODO 加载 */
+/* .plugin-words-counter {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	white-space: nowrap;
+} */
+.status-bar-right-words-counter {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	white-space: nowrap;
+	line-height: 100%;
+	padding: 0 10px;
+	font-size: calc(var(--UI-font-size) - 1px);
+}
+.status-bar-right-focused {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	white-space: nowrap;
+	background-color: var(--bg-tertiary);
+	height: 100%;
+	border-radius: var(--border-radius-1);
+	width: 100px;
+}

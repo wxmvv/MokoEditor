@@ -1,0 +1,61 @@
+.filePanel {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 0px;
+	padding: 0px;
+	background-color: transparent;
+	overflow-x: hidden;
+	overflow-y: hidden;
+}
+.treeView {
+	width: 100%;
+	height: calc(100% - var(--panel-header-height));
+	display: flex;
+	flex-direction: column;
+	gap: 0px;
+	background-color: var(--background-primary);
+	overflow: scroll;
+	flex-shrink: 0;
+	text-wrap: none;
+	white-space: nowrap;
+	scrollbar-gutter: stable; /* firefox */
+	/* padding-bottom: var(--status-bar-height); */
+	padding-bottom: 30px;
+}
+
+.tree-item {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 2px; /* 图标和标题距离 */
+	cursor: pointer;
+	flex-grow: 1;
+	height: 100%;
+}
+.rct-tree-item-button {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.tree-item {
+	/* width: 100%; */
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-family: zed-mono;
+	font-weight: 400;
+}
+.tree-item .svg > svg {
+	width: var(--icon-s);
+	height: var(--icon-s);
+}
+.tree-item.selected {
+}
+
+.panel-btn-group {
+	display: flex;
+	flex-direction: column;
+	/* height: 80px; */
+}

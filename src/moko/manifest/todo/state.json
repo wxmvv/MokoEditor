@@ -1,0 +1,44 @@
+{
+	"library": "上次打开的library.json地址",
+	"files": {},
+	"lastActiveWindow": "moko1",
+	"windowState": {
+		"window": {
+			"x": 0,
+			"y": 0,
+			"width": 1280,
+			"height": 720
+		}
+	},
+	// "windowsState": {
+	// 	"lastActiveWindow": {
+	// 		"workspaceIdentifier": {
+	// 			"id": "9feebe08630b5c73bfaa18053560af95",
+	// 			"configURIPath": "file:///Users/wxm/Developer/Moko/MokoEditor.code-workspace"
+	// 		},
+	// 		"backupPath": "/Users/wxm/Library/Application Support/Code/Backups/9feebe08630b5c73bfaa18053560af95",
+	// 		"uiState": {
+	// 			"mode": 1,
+	// 			"x": 196,
+	// 			"y": 0,
+	// 			"width": 1244,
+	// 			"height": 900
+	// 		}
+	// 	},
+	// 	"openedWindows": []
+	// },
+
+	"lastActiveTab": "tab1",
+	"tabState": {
+		"tab1": {
+			"x": 0,
+			"y": 0,
+			"width": 1280,
+			"height": 720
+		}
+	},
+	"lastActiveEditor": {
+		"id": "123",
+		"editorState": {}
+	}
+}
