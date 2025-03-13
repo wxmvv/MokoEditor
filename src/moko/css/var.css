@@ -41,6 +41,7 @@ body {
 body {
 	/* font */
 	--UI-font-size: 14px;
+	--UI-title-font-size: 16px;
 	--editor-font-size: 14px;
 	--editor-line-height: 1.8;
 
@@ -104,7 +105,7 @@ body {
 	--setting-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 
 	/* notification */
-	--notification-bg: var(--bg-primary);
+	--notification-bg: var(--bg-primary-elevated);
 
 	/* modal */
 	--modal-overlay-bg: rgba(var(--bg-rgb), 0.8);
@@ -514,6 +515,7 @@ body {
 	height: 100%;
 	width: 100%;
 	overscroll-behavior: none;
+	/* scroll-behavior: smooth; */
 }
 
 body {

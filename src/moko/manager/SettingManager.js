@@ -6,8 +6,8 @@ import Plugin from "../model/Plugin";
 import SettingsBtnSvg from "../icons/file_icons/settings.svg?raw";
 import { Svg } from "../model/Svg";
 
-import defaultSettingsJSON from "../manifest/settings/default_settings.json?raw";
-import userSettingsJSON from "../manifest/settings/user_settings.json?raw";
+// TODO 
+// 1. 目前导入顺序有问题
 
 class SettingManager extends Plugin {
 	constructor(moko) {
@@ -28,14 +28,19 @@ class SettingManager extends Plugin {
 		this.theme = new Theme(moko);
 		this.font = new Font(moko);
 		// this.vibrancy = moko.uaInfo.isMacOS ? new Vibrancy(moko) : null;
-		this.defaultSetting = this.loadJSON5(defaultSettingsJSON);
-		this.userSetting = this.loadJSON5(userSettingsJSON);
-		this.setting = this.mergeSettings(this.defaultSetting, this.userSetting);
+		// 设置
+		this.defaultSetting = {};
+		this.userSetting = {};
+		this.setting = {};
 		console.log("[SettingManager] 加载设置:", this.setting);
 		this.icon = SettingsBtnSvg;
 		this.load();
 	}
-
+	loadSetting(defaultSettingsJSON, userSettingsJSON) {
+		this.defaultSetting = this.loadJSON5(defaultSettingsJSON);
+		this.userSetting = this.loadJSON5(userSettingsJSON);
+		this.setting = this.mergeSettings(this.defaultSetting, this.userSetting);
+	}
 	async onload() {
 		// const item = this.addTitleBarRightItem();
 		this.showCommand = {

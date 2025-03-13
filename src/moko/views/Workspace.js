@@ -5,42 +5,49 @@ import Events from "../model/Events";
 
 import { testInitPaneState, welcomeInitPaneState, emptyInitPaneState, untitledInitPaneState } from "./workspace/Pane";
 
+function getStartupWorkspaceState(startupEditorConfig = "none") {
+	if (startupEditorConfig === "newUntitledFile") return { panes: [{ ...untitledInitPaneState }], panels: [] };
+	else if (startupEditorConfig === "welcome") return { panes: [{ ...welcomeInitPaneState }], panels: [] };
+	else if (startupEditorConfig === "test") return { panes: [{ ...testInitPaneState }], panels: [] };
+	else if (startupEditorConfig === "empty") return { panes: [{ ...emptyInitPaneState }], panels: [] };
+	else if (startupEditorConfig === "none") return { panes: null, panels: [] }; // TODO
+	else return { panes: null, panels: [] };
+}
+
 class Workspace extends Events {
 	// 整个包含Editor工作区
 	constructor(moko) {
 		super();
 		this.moko = moko;
 		this.workspace = this;
-		this.state = null; // TODO读取文件状态
 		this.containerEl = this.moko.containerEl.createDiv("workspace");
 		this.setWatermark();
 		this.moko.addElement("workspace", this.containerEl);
 		this.moko.addElement("workspace-watermark", this._watermarkEl);
+		// workspace
+		this.state = null; // workspace.json
+		this.LayoutManager = null; // TODO
 		this.views = [];
-		this.LayoutManager = null;
-		// Pane
-		this.activePane = null;
-		this.activeView = null;
-		this.activeEditor = null; // 当前激活的 编辑器 包含toolbar 和 editor
-		this._panes = [];
-		// this._panesCache = [];
-		// Panel
-		this.primary_siderbar = null; //left TODO
-		this.secondary_siderbar = null; //right TODO
-		this.activePanel = null; // 当前激活的 左panel
-		this.activePanelType = null;
-		this.panelsList = {};
-		this.panel = new Panel(this); // 左panel // TODO 左右panel
-		this.enbledPanelTypes = ["file-panel-view"];
-		// Workspace
-		this.state = null; // {}
 		// this.undoHistory = []; // 撤销记录
 		// Splitter
 		// this.leftSplitter = null; // 左panel 分割线 // TODO Splitter
 		// this.rightSplitter = null; // 右panel 分割线
+		// pane
+		this.activePane = null;
+		this.activeView = null;
+		this.activeEditor = null; // 当前激活的 编辑器 包含toolbar 和 editor
+		this._panes = [];
+		// Panel
+		this.primary_siderbar = null; //TODO left
+		this.secondary_siderbar = null; //TODO right
+		this.activePanel = null;
+		this.activePanelType = null;
+		this.panelsList = {};
+		this.panel = new Panel(this);
+		this.enbledPanelTypes = ["file-panel-view"];
 		// config
 		this.config = {
-			startupEditor: "welcome", // none welcome newUntitledFile // none 启动时不打开编辑器 welcome 打开包含帮助使用的链接的欢迎页面 newUntitledFile 打开无标题文本文件(仅在打开空窗口使用)
+			startupEditor: "xxx", // none welcome newUntitledFile // none 启动时不打开编辑器 welcome 打开包含帮助使用的链接的欢迎页面 newUntitledFile 打开无标题文本文件(仅在打开空窗口使用)
 			alwaysFocusNewTab: true, // 是否始终聚焦编辑器
 		};
 
@@ -75,26 +82,20 @@ class Workspace extends Events {
 		console.log("[workspace] redo", this.activeEditor);
 		this.activeEditor.redo();
 	}
-	//MARK  初始化
-
+	// Init
 	load(workspaceState) {
-		if (!workspaceState) console.log("[workspace] load: empty workspaceState");
-		else console.log("[workspace] load: ", workspaceState);
+		if (!workspaceState) console.log("[workspace] no state, use default");
+		else console.log("[workspace] load state", workspaceState);
 		this.loadPanelViews();
 		this.setState(workspaceState);
-		this.trigger("load-done", this);
 	}
-	// MARK workspace state
+
 	setState(workspaceState) {
 		if (workspaceState && workspaceState.panes.length > 0) this.state = workspaceState;
-		else if (this.config.startupEditor === "newUntitledFile") this.state = { panes: [{ ...untitledInitPaneState }], panels: [] };
-		else if (this.config.startupEditor === "welcome") this.state = { panes: [{ ...welcomeInitPaneState }], panels: [] };
-		else if (this.config.startupEditor === "test") this.state = { panes: [{ ...testInitPaneState }], panels: [] };
-		else if (this.config.startupEditor === "empty") this.state = { panes: [{ ...emptyInitPaneState }], panels: [] };
-		else if (this.config.startupEditor === "none") this.state = { panes: null, panels: [] };
-		else this.state = { panes: null, panels: [] }; // console.log(this.state.panes);
-		this.setPanesState(this.state.panes, this.state.active_pane_id);
-		// TODO openView
+		else this.state = getStartupWorkspaceState(this.config.startupEditor);
+		this.setPanesState(this.state.panes, this.state.active_pane_id).then(() => {
+			this.trigger("load-done", this);
+		});
 	}
 	//获取workspaceState 应该在关闭时保存的
 	getState() {
@@ -110,6 +111,7 @@ class Workspace extends Events {
 	}
 	// MARK PaneState
 	async setPanesState(panesState, active_pane_id) {
+		if (!panesState) return;
 		const _panes = await this._createPanes(panesState);
 		this._setActivePane(_panes.find((pane) => pane.id === active_pane_id || "") || _panes[0], { focus: false });
 	}
@@ -123,9 +125,9 @@ class Workspace extends Events {
 		return this._panes;
 	}
 	async _createPane(paneState) {
-		// console.log("[workspace] create pane: ", paneState);
+		if (!paneState) return;
 		const pane = new Pane(this);
-		if (paneState) await pane.setState(paneState);
+		await pane.setState(paneState);
 		this._panes.push(pane);
 
 		return pane;
@@ -180,6 +182,19 @@ class Workspace extends Events {
 			this.workspace.containerEl.appendChild(this.activePane.containerEl);
 		}
 	}
+	// TODO 待完善
+	async save() {
+		// console.log(this.activePane, this.activeEditor);
+		// console.log(this.activeEditor.file.path, this.activeEditor.cm.state.doc.toString(), {});
+		const filepath = this.activeEditor.file.path;
+		const value = this.activeEditor.cm.state.doc.toString();
+		const options = {};
+		const withBinary = false;
+		await this.moko.FileManager.saveFile(filepath, value, options, withBinary).then(() => {
+			this.activeEditor.setModified(false);
+			this.activeEditor.setSaved(value);
+		});
+	}
 	async openWelcome() {
 		const file = { path: "welcome", name: "欢迎", type: "welcome" };
 		await this.openFile(file);
@@ -214,26 +229,23 @@ class Workspace extends Events {
 	}
 
 	// MARK Panel
-	// MARK Panel loadPanelViews
 	loadPanelViews() {
-		// TODO 自动注册开启的panel
-		// const panelTypes = Object.keys(this.moko.ViewRegistry.viewByType);
-		if (!this.enbledPanelTypes || this.enbledPanelTypes.length == 0) return; //console.log("ViewRegistry.viewByType is empty 未注册任何panel");
+		if (!this.enbledPanelTypes || this.enbledPanelTypes.length == 0) return;
 		for (const PanelTypeName of this.enbledPanelTypes) this.loadPanelView(PanelTypeName);
 	}
 	loadPanelView(PanelTypeName) {
-		this.panelsList[PanelTypeName] = this.moko.ViewRegistry.viewByType[PanelTypeName](this.moko.workspace.panel);
+		this.panelsList[PanelTypeName] = this.moko.PanelRegistry.panelByType[PanelTypeName](this.moko.workspace.panel); // 传参
 		this.panelsList[PanelTypeName].containerEl.style.display = "none";
 		this.panelsList[PanelTypeName].load();
 	}
-	// MARK Panel togglePanel
+
 	togglePanel(PanelTypeName) {
 		if (this.panel.collapsed) {
 			this.switchPanel(PanelTypeName);
 			this.openPanel(PanelTypeName);
 		} else {
 			if (this.activePanelType == PanelTypeName) {
-				this.activePane.focus(); // 宽度问题
+				if (this.activePane) this.activePane.focus(); // 宽度问题
 				this.closePanel();
 			} else {
 				this.switchPanel(PanelTypeName);

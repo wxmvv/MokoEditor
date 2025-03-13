@@ -159,7 +159,7 @@ export class ElectronAdapter extends Adapter {
 		// console.log(`[chokidar] [${rootPath}:ready] Initial scan complete. Ready for changes`);
 	}
 	handleWatcherRaw(rootPath, event, path, details) {
-		// console.log(`[chokidar] [${rootPath}:raw] Raw event info:`, event, path, details);
+		console.log("[chokidar]", "[rootPath]", rootPath, "[event]", event, "[path]", path, "[details]", details);
 	}
 	getLevel(rootPath, targetPath) {
 		// 计算相对路径
@@ -360,9 +360,10 @@ export class ElectronAdapter extends Adapter {
 	async showMessageBox(options) {
 		return await this.ipcRenderer.invoke("dialog:showMessageBox", options);
 	}
-	async showCertificateTrustDialog(options) {
-		return await this.ipcRenderer.invoke("dialog:showCertificateTrustDialog", options);
-	}
+	// 无用
+	// async showCertificateTrustDialog(options) {
+	// 	return await this.ipcRenderer.invoke("dialog:showCertificateTrustDialog", options);
+	// }
 	async showErrorBox(title, content) {
 		return await this.ipcRenderer.invoke("dialog:showErrorBox", title, content);
 	}
@@ -391,12 +392,12 @@ export class ElectronAdapter extends Adapter {
 	}
 	showNotification(options) {
 		// return this.ipcRenderer.invoke("notification:showNotification", options);
-		options = {};
-		options.title = "test title";
-		options.body = "test body";
-		options.subtitle = "test subtitle";
+		if (!options) options = { title: "man" };
+		options.title = options.title || "";
+		options.body = options.body || "";
+		options.subtitle = options.subtitle || "";
 		options.hasReply = true;
-		options.replyPlaceholder = "test placeholder";
+		options.replyPlaceholder = options.replyPlaceholder || "";
 		// return this.ipcRenderer.send("show-notification", options);
 		return this.ipcRenderer.invoke("notification:show", options);
 	}

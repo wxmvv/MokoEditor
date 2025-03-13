@@ -22,7 +22,7 @@ async function showAboutBox(mainWindow) {
 	return await dialog.showMessageBox(mainWindow, {
 		title: "moko",
 		message: "Moko Editor",
-		detail: `version: 0.0.1\nelectron:${process.versions.electron}\nchromium:${process.versions.chrome}\nnode:${process.versions.node}\nv8:${process.versions.v8}\nOS:${process.platform}`,
+		detail: `version: 0.1.0\nelectron:${process.versions.electron}\nchromium:${process.versions.chrome}\nnode:${process.versions.node}\nv8:${process.versions.v8}\nOS:${process.platform}`,
 	});
 }
 async function showUpdateBox(mainWindow) {

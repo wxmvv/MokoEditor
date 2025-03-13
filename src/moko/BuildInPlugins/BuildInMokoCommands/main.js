@@ -1,57 +1,60 @@
 import Plugin from "../../model/Plugin";
-// import { newHotkey } from "../../utils/moko";
 
 const buildInMokoCommands = [
 	{
 		command: "show-command-palette",
 		commandHandler: () => window.moko.CommandPalette.showCommandPalette(),
-		options: { hotkeys: ["command+shift+p"] }, // ["ctrl+shift+p", "command+shift+p"]
+		options: {
+			hotkeys: ["command+shift+p"],
+		},
 	},
 	{
 		command: "show-file-palette",
 		commandHandler: () => window.moko.CommandPalette.showFilePalette(),
-		options: { hotkeys: ["command+p"] }, // ["ctrl+p", "command+p"]
+		options: {
+			hotkeys: ["command+p"],
+		},
 	},
 	{
 		command: "open-in-editor",
 		commandHandler: function () {},
 		options: {
-			hotkeys: "command+o", // [newHotkey(["Mod", "Alt"], "N")],
+			hotkeys: "command+o",
 		},
 	},
 	{
 		command: "go-back",
 		commandHandler: function () {},
 		options: {
-			hotkeys: "command+left", // [newHotkey(["Mod", "Alt"], "ArrowLeft")]
+			hotkeys: "command+left",
 		},
 	},
 	{
 		command: "go-forward",
 		commandHandler: function () {},
 		options: {
-			hotkeys: "command+right", // [newHotkey(["Mod", "Alt"], "ArrowRight")]
+			hotkeys: "command+right",
 		},
 	},
 	{
 		command: "zoom-in",
 		commandHandler: function () {},
 		options: {
-			hotkeys: "command+up", // [newHotkey(["Mod", "Alt"], "ArrowUp")]
+			hotkeys: "command+up",
 		},
 	},
 	{
 		command: "zoom-out",
 		commandHandler: function () {},
 		options: {
-			hotkeys: "command+down", // [newHotkey(["Mod", "Alt"], "ArrowDown")]
+			hotkeys: "command+down",
 		},
 	},
 	{
 		command: "new-file",
 		commandHandler: function () {},
 		options: {
-			hotkeys: "command+n", // [newHotkey(["Mod"], "N")],
+			hotkeys: "command+n",
 		},
 	},
 ];

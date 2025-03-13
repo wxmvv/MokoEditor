@@ -153,20 +153,19 @@ export class Editor6 {
 			// EditorState.transactionFilter.of((tr) => tr.annotation(Transaction.userEvent) !== "input"), // 设置事务过滤器
 			// EditorState.transactionExtender.of((tr) => console.log(tr)), // 设置事务扩展器
 		];
-		this.state = EditorState.create({
+		this.initState = EditorState.create({
 			doc: `# 一级标题\n## 二级标题\n### 三级标题\n#### 四级标题\n##### 五级标题\n###### 六级标题\n\n这是一个段落示例。段落之间要有空行隔开。\n\n**加粗文本**\n*斜体文本*\n***加粗且斜体文本***\n\n~~删除线文本~~\n\n> 这是一个引用块。\n> 可以包含多行内容，所有行前都要添加  '>' \n\n- 无序列表项 1\n- 无序列表项 2\n  - 嵌套无序列表项\n\n1. 有序列表项 1\n2. 有序列表项 2\n   1. 嵌套有序列表项\n\n[这是一个链接](https://example.com)\n\n这是一个自动链接：<https://example.com>\n\n代码块示例：\n\n\nconsole.log("Hello, Markdown!");\n\n\n带语法高亮的代码块：\n\njavascript\nfunction greet() {\n  console.log("Hello, GFM!");\n}\n\n\n### 表格\n\n| 标题 1 | 标题 2 |\n| ------ | ------ |\n| 单元格 1 | 单元格 2 |\n| 单元格 3 | 单元格 4 |\n\n### 任务列表\n\n- [x] 已完成任务\n- [ ] 未完成任务\n\n### 图片\n\n![示例图片](https://example.com/image.png)\n\n这是 Markdown 和 GFM 的基本语法示例。`,
-			extensions: [
-				mokoBasicSetup,
-				this.basicDynamicState(),
-			],
+			extensions: [mokoBasicSetup, this.basicDynamicState()],
 		}); // state view
-		this.cm = new EditorView({ state: this.state, parent: this.containerEl });
+		this.cm = new EditorView({ state: this.initState, parent: this.containerEl });
 		this.containerEl.addEventListener("mousemove", this.showScrollbar); // MARK listener 初始化颜色 & 滚动条事件
 		this.containerEl.addEventListener("mouseleave", this.hideScrollbar);
 		this.moko.SettingManager.theme.on("theme-change", (isDarkMode) => this.handleThemeChange(isDarkMode));
 		this.moko.SettingManager.theme.on("theme-change", () => this.updateCmBg());
 		this.file = null; // 初始化文件
 		this._fileCache = {}; // 初始化文件缓存
+		this._fileValueCache = {}; // 初始化文件值缓存
+		this.docBackupStr = ""; // 初始化文档备份
 	}
 	// TEST
 	// MARK 设置状态 设置文本
@@ -184,28 +183,35 @@ export class Editor6 {
 			}
 		);
 		view.setState(newState);
+		this.docBackupStr = savedState.docBackupStr;
 	}
-	saveEditorState(view) {
+	saveEditorState(cm) {
 		//  需要保存的字段 1. 文档内容doc 2. 光标位置selection 3. 历史记录history 4. scroll位置 5.fold return { ...view.state };
-		const history = view.state.field(historyField, false); // 提取历史字段状态
+		const history = cm.state.field(historyField, false); // 提取历史字段状态
 		return {
-			stateJson: { ...view.state.toJSON({ history: historyField }) },
-			viewState: { ...view.state },
-			doc: view.state.doc,
-			selection: { ...view.state.selection },
+			stateJson: { ...cm.state.toJSON({ history: historyField }) },
+			viewState: { ...cm.state },
+			doc: cm.state.doc,
+			selection: { ...cm.state.selection },
 			history: { ...history }, // 保存历史状态
+			//scroll: cm.scrollDOM.scrollTop, // 保存滚动位置
+			//fold: cm.state.field(foldGutter, false), // 保存折叠状态
 		};
 	}
 	setFile(item, value) {
 		// 如果this.file存在 则先保存历史状态
-		if (this.file) this._fileCache[this.file.path] = { ...this.saveEditorState(this.cm) };
+		if (this.file) {
+			this._fileCache[this.file.path] = { ...this.saveEditorState(this.cm) };
+		}
 		// 设置新文件
 		if (item.path === this.file?.path) return console.log("[editor] same file"); // 如果打开文件就是当前文件 直接返回
 		if (item.path === "untitled") (this.file = null), console.log("[editor] new untitled file"); // 如果是未命名标题的新文件
 		else this.file = item; // 否则设置当前文件
 		// TODO 根据文件后缀名设置解析模式 this.setMode(CodeMirror.findModeByFileName(item.name)?.mode || "markdown"); // 设定解析模式
-		// console.log("Test [history state]", this._fileCache[item.path]);
-		if (this._fileCache[item.path]) this.restoreEditorState(this.cm, this._fileCache[item.path]); // 打开之前存储过状态的文件
+
+		if (this._fileCache[item.path]) {
+			this.restoreEditorState(this.cm, this._fileCache[item.path]);
+		} // 打开之前存储过状态的文件
 		else {
 			const newFileState = EditorState.create({
 				doc: value,
@@ -216,7 +222,8 @@ export class Editor6 {
 			});
 			this.cm.setState(newFileState);
 			this._fileCache[item.path] = { ...this.saveEditorState(this.cm) };
-			this.setModified(this.isModified(this.cm));
+			this._fileValueCache[item.path] = value;
+			this.setModified(this.isModified(this._fileValueCache[item.path], this.cm));
 		}
 		this.file = item;
 		this.moko.workspace.trigger("editor-file-change", this);
@@ -252,8 +259,9 @@ export class Editor6 {
 		this.cm.dispatch({ effects: this.lineWrappingConfig.reconfigure(isLineWrapping ? EditorView.lineWrapping : []) });
 	}
 	// MARK isModified
-	isModified(cm) {
+	hasHistory(cm) {
 		const history = cm.state.field(historyField, false); //return cm.state.field(historyField).dirty;
+		console.log(history);
 		if (!history || history.done.length === 0) return false;
 		if (history.done && history.done.length > 0) {
 			for (const item of history.done) {
@@ -261,6 +269,13 @@ export class Editor6 {
 			}
 			return false;
 		} else return false;
+	}
+	isModified(valueCache, cm) {
+		return valueCache !== cm.state.doc.toString();
+	}
+	setSaved(value) {
+		this._fileValueCache[this.view.file.path] = value;
+		this.setModified(false);
 	}
 	setModified(mod) {
 		if (this.modified === mod) return; // 如果本来就更改了，则不进行操作
@@ -273,7 +288,7 @@ export class Editor6 {
 	// MARK history undo redo
 	undo() {
 		undo(this.cm);
-		this.setModified(this.isModified(this.cm));
+		this.setModified(this.isModified(this._fileValueCache[this.view.file.path], this.cm));
 	}
 	redo() {
 		redo(this.cm);

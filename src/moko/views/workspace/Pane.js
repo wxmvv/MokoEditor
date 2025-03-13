@@ -28,15 +28,10 @@ export class Pane extends Events {
 		this.containerEl.addEventListener("mousedown", () => this.workspace._setActivePane(this));
 	}
 
-	// MARK 关闭pane时调用
-	onclose() {
-		if (this.workspace) this.workspace.removeActivePane(this);
-	}
-	// MARK 主进程
-	// setState()
 	async setState(pane_state) {
 		// console.log("[pane] setState:", pane_state);
-		if (!pane_state) pane_state = emptyInitPaneState;
+		if (!pane_state || !pane_state.tabs || !pane_state.tabs.length === 0) return;
+		pane_state.tabs.filter((tab) => !this.moko.ViewRegistry.getTypeByExtension(getFileExtension(tab.path)));
 		const tabs = pane_state.tabs;
 		const currentTabPath = pane_state.currentTabPath || tabs[0]?.path;
 		for (const tab of tabs) {
@@ -53,14 +48,12 @@ export class Pane extends Events {
 		this.addTabBar();
 	}
 
-	// MARK
 	newFile() {}
-	// DONE openFile
-	// MARK 添加新视图
+
 	async openFile(file, openState) {
 		if (!file) return;
 		if (!openState) openState = {};
-		let viewType; // 获取视图类型
+		let viewType;
 		if (!file.extension) file.extension = getFileExtension(file.path);
 		if (!file.name) file.name = extractFileName(file.path);
 		if (file.path === "welcome") viewType = "welcome";
@@ -68,58 +61,34 @@ export class Pane extends Events {
 		else if (file.path === "test") viewType = "test";
 		else if (file.path === "empty") viewType = "empty";
 		else viewType = this.moko.ViewRegistry.getTypeByExtension(file.extension) || null;
-		if (!viewType) {
-			// TODO 打开默认应用 目前有一点问题 测试时如果workspacestate中tabs包含了无法识别的文件，则会在打开文件后重新加载
-			// TODO 解决方法：在打开文件时，如果文件类型无法识别，则从tab中删除
-			// this.tabs = this.tabs.filter((tab) => tab.path !== file.path);
-			this.moko.openWithDefaultApp(file.path);
-			return "openWithDefaultApp";
-			// viewType = "editor";
-		}
-		// 状态相关
-		const state = openState.state || {}; // 获取状态
+		if (!viewType) viewType = "editor"; // TODO 1.添加更多extension 以及 2.如果不存在则直接打开二进制文件
+		// state
+		const state = openState.state || {};
 		state.file = file.path;
 		state.path = file.path;
 		state.name = file.name;
 		const shouldActivate = openState.active || this.moko.SettingManager.getSetting("editor.alwaysFocusNewTab"); // 确定是否激活新标签
-		const group = openState.group; // 获取组
-		// 添加tab
+		const group = openState.group;
+		// work
 		this.addCurrentTab(state);
-		// 设置状态
 		await this.setViewState({ file, type: viewType, state, active: shouldActivate, group }, openState.eState); // 创建视图状态 设置视图状态
 	}
 
 	async setViewState(viewState) {
-		// , ephemeralState
+		//  ephemeralState
 		try {
 			// console.log("setViewState", viewState, ephemeralState);
 			if (this.working) return; // 如果正在处理，则直接返回 // 标记为正在处理
 			else this.working = true;
-			// state
-			// let historyState;
-			// let newView;
-			// const currentViewType = this.view?.getViewType() || "";
 			const state = viewState.state || {};
 			const openOptions = { history: false, layout: false, close: false };
 			// if (this.view) historyState = this.getState(); // 如果当前存在view 获取当前视图状态
 			const view = await this._getView(viewState.type);
-			await this._openView(view); // openOptions.layout = true; // openOptions.history = true; //如果是同样的view类型，则直接更新状态
+			await this._openView(view);
 			if (this.view instanceof FileView) await this.setFile(viewState.file);
 			else await this.view.setState(state, openOptions); // TODO 需要精简
-			// 设置视图状态
-			// await this.view.setState(state, openOptions);
-			// if (this.view instanceof FileView) await this.setFile(viewState.file);
-			// 暂时未使用
-			// if (openOptions.close) await this.openView(null); // 关闭视图
-			// console.log("setViewState", viewState, ephemeralState);
-			// if (viewState.active) this.workspace._setActivePane(this, { focus: true });
-			// if (viewState.group !== undefined) this.setGroupMember(viewState.group);
-			// if (options) this.setEphemeralState(options);
-			// if (viewState.popstate || state.sync) openOptions.history = false;
-			// if (openOptions.layout) this.workspace.onLayoutChange();
-			// this.updateHeader();
-			// if (openOptions.history && historyState) this.recordHistory(historyState);
-			// if (openOptions.done) openOptions.done(); // 调用完成回调
+			await this.view.focus(); // 打开后自动 auto focus
+			this._updateTabs(); // 更新tab 并autoPositionTab
 		} catch (error) {
 			console.error(error);
 		} finally {
@@ -129,9 +98,15 @@ export class Pane extends Events {
 	// MARK 如果是FileView 则加载FileView.seFile()
 	async setFile(file) {
 		if (this.view instanceof FileView) this.view.setFile(file);
-		// console.log("[pane] setFile:", file);
 		this.trigger("file-change", this);
 	}
+	// async saveFile() {
+	// 	if (this.view instanceof FileView) {
+	// 		console.log(this.view.file.path, this.view.getValue(), { encoding: this.view.encoding });
+	// 		// await this.moko.FileManager.saveFile(this.view.file.path, this.view.getValue(), { encoding: this.view.encoding });
+	// 	}
+	// 	this.trigger("file-save", this);
+	// }
 
 	// DONE 视图
 	// 通过type获取视图 如果缓存存在 直接获取，不存在则新建
@@ -177,18 +152,19 @@ export class Pane extends Events {
 	//获取所有state
 	getState() {
 		return {
-			title: this.getDisplayText(),
 			icon: this.getIcon(),
 			pane_state: this.getPaneState(),
 			view_state: this.getViewState(),
-			// file: this.getViewState().file,
 			state: this.getViewState(),
 			eState: this.getEphemeralState(),
 			e_state: this.getEphemeralState(),
+			...this.getPaneState(),
 		};
 	}
 	getPaneState() {
 		return {
+			id: this.id,
+			type: this.type,
 			tabs: this.tabs,
 			currentTabPath: this.currentTabPath,
 		};
@@ -199,10 +175,12 @@ export class Pane extends Events {
 			type: this.view?.getViewType() || "empty", // 获取视图类型或设置为 "empty"
 			state: this.view?.getState() || {}, // 获取视图状态或设置为空对象
 			file: this.view?.getFile() || null, // 获取视图文件或设置为 null
+			currentTabPath: this.currentTabPath, // 获取当前标签页路径
 		};
 		if (this.pinned) viewState.pinned = true; // 设置 pinned 为 true
 		return viewState;
 	}
+	// 备用
 	getEphemeralState() {
 		return this.view.getEphemeralState();
 	}
@@ -244,24 +222,26 @@ export class Pane extends Events {
 	unhighlight() {
 		this.containerEl.removeClass("is-highlighted");
 	}
-	// MARK init 初始化方法
-
+	// init
 	focus() {
+		if (!this.view) return;
 		this.view?.focus();
 	}
-	// MARK detach
+	// detach
 	close() {
-		this.containerEl.detach(); // 从 DOM 中移除容器
-		this.onclose(); // 调用 onClose 方法
+		this.containerEl.detach();
+		this.onclose();
 		// const index = this.workspace._panes.findIndex((obj) => obj.id === this.id); // 从panes缓存删除
 		// if (index !== -1) this.workspace._panes.splice(index, 1);
 		this.trigger("pane-close", this);
 	}
+	onclose() {
+		if (this.workspace) this.workspace._removeActivePane(this); // 关闭pane时调用
+	}
 
-	// MARK Tab相关
-	// MARK 添加tabbar视图
+	// Tab
 	addTabBar() {
-		if (!this.tabBar) this.tabBar = this.moko.ViewRegistry.getToolbarById("tab-bar")(this); // 如果需要 则加载tabbar
+		if (!this.tabBar) this.tabBar = this.moko.ToolBarRegistry.getToolbarById("tab-bar")(this); // 如果需要 则加载tabbar
 		this.containerEl.insertBefore(this.tabBar.containerEl, this.containerEl.firstChild); //将tabbar放在最上
 		this.tabBar.load();
 		this.tabGroup = this.tabBar.getTabGroup();
@@ -293,6 +273,7 @@ export class Pane extends Events {
 		this.tabs = this.tabs.filter((tab) => tab.path !== file.path);
 		this._updateTabs();
 	}
+
 	async _showSaveDialog() {
 		this.moko.FileManager.showSaveDialog();
 	}
@@ -305,8 +286,7 @@ export class Pane extends Events {
 			// DOING 这里是保存的逻辑 未来要放在其他地方
 			const tab = this.tabs[index];
 			console.log("[pane] tab is modified, can't close, show save dialog");
-			if (tab.path === "untitled") {
-				// if (tab是untitled) {
+			if (tab.path === "untitled" || tab.path === untitled) {
 				const savePath = await this._showSaveDialog();
 				if (savePath) this.moko.FileManager.saveFile(savePath, tab.content);
 			} else {

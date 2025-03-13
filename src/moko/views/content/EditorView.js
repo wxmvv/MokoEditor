@@ -4,7 +4,6 @@ import FileView from "../../model/FileView.js";
 const EDITOR_VIEW_TYPE = "editor";
 const editor_view_icon_name = "editor";
 
-
 export class EditorView extends FileView {
 	constructor(pane, id) {
 		super(pane, id ? `${id}-editor-view` : "editor-view");
@@ -44,7 +43,7 @@ export class EditorView extends FileView {
 		else value = await this.moko.FileManager.openFile(item.path);
 		this.editor.setFile(item, value, cmState);
 	}
-
+	
 	getState() {
 		const stateData = super.getState(); // stateData.mode = this.getMode(); // 获取当前模式 // stateData.backlinks = this.showBacklinks; // 是否显示反向链接 // stateData.source = this.editMode.sourceMode; // 获取编辑模式的源模式
 		return stateData; // 返回完整的状态数据

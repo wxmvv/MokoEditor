@@ -4,7 +4,9 @@ const buildInEditorCommands = [
 	{
 		command: "toggle-bold",
 		commandHandler: () => console.log("toggle-bold"),
-		options: { hotkeys: "ctrl+b" }, //newHotkey(["Mod"], "B")
+		options: {
+			hotkeys: "ctrl+b",
+		},
 	},
 ];
 

@@ -4,12 +4,17 @@ const buildInWorkspaceCommands = [
 	{
 		command: "undo",
 		commandHandler: () => window.moko.workspace.undo(),
-		options: { hotkeys: ["ctrl+z", "command+z"] }, //newHotkey(["Mod"], "Z")
+		options: { hotkeys: ["ctrl+z", "command+z"] },
 	},
 	{
 		command: "redo",
 		commandHandler: () => window.moko.workspace.redo(),
-		options: { hotkeys: ["ctrl+shift+z", "command+shift+z"] }, //newHotkey(["Mod", "Shift"], "Z")
+		options: { hotkeys: ["ctrl+shift+z", "command+shift+z"] },
+	},
+	{
+		command: "save",
+		commandHandler: () => window.moko.workspace.save(),
+		options: { hotkeys: ["ctrl+s", "command+s"] },
 	},
 ];
 export class BuildInWorkspaceCommands extends Plugin {

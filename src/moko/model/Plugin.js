@@ -63,28 +63,13 @@ class Plugin extends Component {
 		this.register(() => titleBarItem.detach());
 		return titleBarItem;
 	}
-	// DONE ToolBarItem
-	// addToolBarItem(itemId, toolbarItem) {
-	// this.registerToolbarItem();
-	// const toolBarItem = this.moko.toolbar.registerToolbarItem();
-	// const toolBarItem = this.moko.ToolBarItemRegistry.registerToolbarItem();
-	// const className = "plugin-" + this.manifest.id.toLowerCase().replace(/[^_a-zA-Z0-9-]/g, "-");
-	// toolBarItem.addClass(className);
-	// this.register(() => toolBarItem.detach());
-	// return toolBarItem;
-	// }
-	// addToolBarItem = function (itemId, toolbarItem) {
-
-	// }
+	// MARK Registry
 	registerToolbarItem(itemId, toolbarItemCreater) {
-		// console.log(this.moko.ToolBarItemRegistry);
 		this.moko.ToolBarItemRegistry.registerToolBarItem(itemId, toolbarItemCreater);
 		this.register(function () {
 			return this.moko.ToolBarItemRegistry.unregisterToolBarItem(itemId);
 		});
 	}
-
-	// TODO View
 	registerView(viewType, View) {
 		this.moko.ViewRegistry.registerView(viewType, View);
 		this.register(function () {
@@ -92,16 +77,12 @@ class Plugin extends Component {
 		});
 	}
 	registerPanel(viewType, View) {
-		this.moko.ViewRegistry.registerView(viewType, View);
+		this.moko.PanelRegistry.registerPanel(viewType, View);
 		this.register(function () {
-			return this.moko.ViewRegistry.unregisterView(viewType);
+			return this.moko.PanelRegistry.unregisterView(viewType);
 		});
 	}
 
-	// DONE Commands 旧
-	// addCommand(commandObj) {
-	// 	return this.registerCommand(commandObj.id, commandObj.callback || commandObj.checkCallback || commandObj.editorCallback || commandObj.checkEditorCallback, { hotkey: commandObj.hotkeys });
-	// }
 	// MARK 我的command实现
 	registerCommand(command, commandHandler, options) {
 		command = this.manifest.id + ":" + command;

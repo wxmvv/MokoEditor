@@ -33,21 +33,30 @@ export class Adapter extends Events {
 	async stat(normalizedPath) {}
 
 	// MARK 系统功能
-	// 打开对话框
+	// MARK 打开对话框
 	async showOpenDialog(options) {
 		console.log("showOpenDialog", options); //https://www.electronjs.org/docs/latest/api/dialog
 	}
 	async showSaveDialog(options) {
+		// 保存文件对话框 包括选择地址 文件名
 		console.log("showSaveDialog", options);
 	}
+	async showMessageBox(options) {
+		console.log("showMessageBox", options);
+	}
+	async showErrorBox(title, content) {
+		console.log("showErrorBox", title, content);
+	}
+	// MARK 其他系统功能
+	// 用默认程序文件
 	async openWithDefaultApp(filePath) {
 		console.log("openWithDefaultApp", filePath);
 	}
+	// 打开外部文件
 	async openExternal(filePath) {
 		console.log("openExternal", filePath);
 	}
 	// notification
-	
 }
 
 export default Adapter;

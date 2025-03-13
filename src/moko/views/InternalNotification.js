@@ -4,25 +4,20 @@ export class InternalNotification {
 		this.containerEl = moko.containerEl.createDiv("notifications-container");
 		this.items = [];
 	}
-	static get instance() {
-		if (!this._instance) {
-			this._instance = new Notification();
-		}
-		return this._instance;
-	}
+
 	addItem(title, message) {
 		const item = this.containerEl.createDiv("notification-item");
 		item.createDiv("notification-title").setText(title);
 		item.createDiv("notification-message").setText(message);
 		const closeEl = item.createDiv("notification-close");
-		closeEl.addEventListener("click", (index) => this.removeItem(index));
+		closeEl.setText("×");
+		closeEl.addEventListener("click", () => this.removeItem(item));
 		this.items.push(item);
 		return item;
 	}
-	removeItem(index) {
-		const item = this.items[index];
+	removeItem(item) {
 		item.remove();
-		this.items.splice(index, 1);
+		this.items = this.items.filter((i) => i !== item);
 	}
 }
 

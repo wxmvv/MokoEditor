@@ -4,7 +4,7 @@ import UndoSvg from "../../icons/undo.svg?raw";
 import RedoSvg from "../../icons/redo.svg?raw";
 import ToolBarItem from "../../views/content/ToolBarItem";
 
-import "./EditorButtonGroup.css";
+import "./styles/EditorButtonGroup.css";
 
 export class EditorButtonGroup extends ToolBarItem {
 	onload() {
@@ -24,6 +24,7 @@ export class EditorButtonGroup extends ToolBarItem {
 		this.boldBtn.innerHTML = Svg({ id: "bold", svgRaw: BoldSvg, clickable: true });
 		this.boldBtn.addEventListener("click", () => {
 			console.log("bold");
+			// TODO 实现 BuildInToolBarItems bold 功能
 			// this.moko.workspace.activeEditor.doc.bold();
 		});
 	}

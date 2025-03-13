@@ -6,7 +6,12 @@ export class FileView extends View {
 		this.file = null; //path 文件路径 name 文件名
 	}
 	// DONE override
-	setFile() {}
+	setFile() {
+		console.log("FileView.setFile");
+	}
+	// saveFIle() {
+	// 	console.log("FileView.saveFIle");
+	// }
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	canAcceptExtension(extension) {
 		// return extensions.includes(extension);

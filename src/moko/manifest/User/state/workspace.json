@@ -3,11 +3,8 @@
 	"panes": [
 		{
 			"id": "pane1",
-			"viewType": "pane",
-			// "currentTabPath": "src/moko/initial/test.md", //当前激活的tab的path现在是一个没有的tab
-			// "currentTabPath": "src/app.ts",
-			// "currentTabPath": "src/moko/TODO.md",
-			"currentTabPath": "test",
+			"type": "pane",
+			"currentTabPath": "src/moko/TODO.md",
 			"tabs": [
 				{
 					"name": "欢迎",
@@ -16,6 +13,10 @@
 				{
 					"name": "TODO.md",
 					"path": "src/moko/TODO.md"
+				},
+				{
+					"name": "moko.js",
+					"path": "src/moko/moko.js"
 				},
 				{
 					"name": "test",

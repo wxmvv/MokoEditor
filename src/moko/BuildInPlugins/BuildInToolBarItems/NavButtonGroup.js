@@ -3,7 +3,7 @@ import ToolBarItem from "../../views/content/ToolBarItem";
 import GoBackSvg from "../../icons/arrow_left.svg?raw";
 import GoForwardSvg from "../../icons/arrow_right.svg?raw";
 
-import "./NavButtonGroup.css";
+import "./styles/NavButtonGroup.css";
 
 export class NavButtonGroup extends ToolBarItem {
 	onload() {
@@ -11,11 +11,13 @@ export class NavButtonGroup extends ToolBarItem {
 		this.goBackBtn = this.containerEl.createDiv("nav-button-go-back");
 		this.goBackBtn.innerHTML = Svg({ id: "GoBack", svgRaw: GoBackSvg, clickable: true });
 		this.goBackBtn.addEventListener("click", () => {
+			// TODO 实现 BuildInToolBarItems go back 功能
 			console.log("go back");
 		});
 		this.goForwardBtn = this.containerEl.createDiv("nav-button-go-forward");
 		this.goForwardBtn.innerHTML = Svg({ id: "GoForward", svgRaw: GoForwardSvg, clickable: true });
 		this.goForwardBtn.addEventListener("click", () => {
+			// TODO 实现 BuildInToolBarItems go forward 功能
 			console.log("go forward");
 		});
 	}

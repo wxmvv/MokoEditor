@@ -18,9 +18,9 @@ class FileExplorer extends Plugin {
 			commandHandler: () => window.moko.workspace.togglePanel(FilE_PANEL_VIEW),
 			options: { hotkeys: ["command+shift+e", "ctrl+shift+e"] }, //[newHotkey(["Mod", "Shift"], "E")],
 		};
-		const { panel } = this.moko.workspace;
-		//注册View
-		this.registerView(FilE_PANEL_VIEW, () => new FilePanelView(panel));
+		// const { panel } = this.moko.workspace;
+		//注册Panel
+		this.registerPanel(FilE_PANEL_VIEW, (panel) => new FilePanelView(panel));
 		//注册statusBar图标
 		const item = this.addStatusBarLeftItem();
 		item.innerHTML = Svg({ id: "FileExplorer", svgRaw: this.icon, clickable: true });

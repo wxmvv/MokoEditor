@@ -1,15 +1,8 @@
 ## Todo List
 
-## BUG
-
--   如果在其他 app 上更改了文件，则无法实时更新现实到编辑器，必须重新开关。
--   输入法飘移 electron 问题 https://github.com/electron/electron/issues/4539 IEM
-
 ### DOING
 
--   切换页面后 auto focus
--   页面选择后如果 tab 呗遮挡 自动移动
--   FileManager save
+-   watch file 完善，以及 如果打开 lib 目录外的文件，也需要 watch
 
 ### TODO
 
@@ -23,8 +16,19 @@
 -   保存文件功能
 -   加载 Register 注册表包括 commands ViewRegistry ToolBarItemRegistry //未来可以优化为一个
 
+-   初始化 embedByExtension registerView
+-   i18n
+
+## BUG
+
+-   输入法飘移 electron 问题 https://github.com/electron/electron/issues/4539 IEM
+
 ## DONE
 
+-   FileManager save
+-   Notification 功能完成
+-   页面选择后如果 tab 呗遮挡 自动移动 autoPositionTab
+-   切换页面后 auto focus
 -   切换文件 tab
 -   恢复历史状态(通过 fromJson 实现)
 -   change codemirror6

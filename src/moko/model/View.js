@@ -49,7 +49,7 @@ export class View extends Component {
 	// MARK toolbar
 	addToolBarById(toolBarId) {
 		if (this.toolBars[toolBarId]) return;
-		this.toolBars[toolBarId] = this.moko.ViewRegistry.getToolbarById(toolBarId)(this);
+		this.toolBars[toolBarId] = this.moko.ToolBarRegistry.getToolbarById(toolBarId)(this);
 		for (const toolBar of Object.values(this.toolBars)) {
 			toolBar.load();
 			this.containerEl.insertBefore(this.toolBars[toolBarId].containerEl, this.editor.containerEl);

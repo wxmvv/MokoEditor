@@ -13,21 +13,21 @@ export class TestButton extends Plugin {
 		// 	this.moko.workspace.openWelcome();
 		// });
 		// MARK open workspace json file
-		const statusBarItem5 = this.addStatusBarLeftItem();
-		statusBarItem5.innerHTML = "loadJson";
-		statusBarItem5.addEventListener("click", async () => {
-			const options = {
-				properties: ["openFile"],
-				message: "请选library json文件",
-				filters: [{ name: "*", extensions: ["json"] }],
-			};
-			const paths = await this.moko.FileManager.showOpenDialog(options);
-			// const JSON5 = window.require("json5");
-			if (!paths || !paths.length) return;
-			const t = await this.moko.adapter.read(paths[0]);
-			const j = JSON5.parse(t);
-			console.log(j);
-		});
+		// const statusBarItem5 = this.addStatusBarLeftItem();
+		// statusBarItem5.innerHTML = "loadJson";
+		// statusBarItem5.addEventListener("click", async () => {
+		// 	const options = {
+		// 		properties: ["openFile"],
+		// 		message: "请选library json文件",
+		// 		filters: [{ name: "*", extensions: ["json"] }],
+		// 	};
+		// 	const paths = await this.moko.FileManager.showOpenDialog(options);
+		// 	// const JSON5 = window.require("json5");
+		// 	if (!paths || !paths.length) return;
+		// 	const t = await this.moko.adapter.read(paths[0]);
+		// 	const j = JSON5.parse(t);
+		// 	console.log(j);
+		// });
 		// MARK prewview file
 		// const statusBarItem = this.addStatusBarLeftItem();
 		// statusBarItem.innerHTML = "preview-file";
@@ -35,12 +35,12 @@ export class TestButton extends Plugin {
 		// 	this.moko.adapter.ipcRenderer.send("preview-file", "/Users/wxm/test/test.jpg");  //需要传入绝对地址
 		// });
 		// MARK vibrancy menu
-		const statusBarItem = this.addStatusBarLeftItem();
-		statusBarItem.innerHTML = "vibrancy menu";
-		statusBarItem.addEventListener("click", async () => {
-			const a = await this.moko.adapter.ipcRenderer.invoke("menu:showVibrancyMenu"); // vibrancy?: ('appearance-based' 完全透明 | 'titlebar' | 'selection' | 'menu' | 'popover' | 'sidebar' | 'header' | 'sheet' | 'window' | 'hud' | 'fullscreen-ui' | 'tooltip' | 'content' | 'under-window' | 'under-page');
-			console.log("menu:showVibrancyMenu :", a);
-		});
+		// const statusBarItem = this.addStatusBarLeftItem();
+		// statusBarItem.innerHTML = "vibrancy menu";
+		// statusBarItem.addEventListener("click", async () => {
+		// 	const a = await this.moko.adapter.ipcRenderer.invoke("menu:showVibrancyMenu"); // vibrancy?: ('appearance-based' 完全透明 | 'titlebar' | 'selection' | 'menu' | 'popover' | 'sidebar' | 'header' | 'sheet' | 'window' | 'hud' | 'fullscreen-ui' | 'tooltip' | 'content' | 'under-window' | 'under-page');
+		// 	console.log("menu:showVibrancyMenu :", a);
+		// });
 		// MARK context menu
 		// const statusBarItem2 = this.addStatusBarLeftItem();
 		// statusBarItem2.innerHTML = "contextMenu";
@@ -56,11 +56,11 @@ export class TestButton extends Plugin {
 		// 	console.log("open-settings");
 		// });
 		// MARK ZEN mode
-		const statusBarItem2 = this.addStatusBarLeftItem();
-		statusBarItem2.innerHTML = "Zen";
-		statusBarItem2.addEventListener("click", () => {
-			this.moko.toggleZen();
-		});
+		// const statusBarItem2 = this.addStatusBarLeftItem();
+		// statusBarItem2.innerHTML = "Zen";
+		// statusBarItem2.addEventListener("click", () => {
+		// 	this.moko.toggleZen();
+		// });
 		// MARK title get cm color mode
 		// const statusBarItem5 = this.addStatusBarLeftItem();
 		// statusBarItem5.innerHTML = "setTitleColor";
@@ -73,6 +73,12 @@ export class TestButton extends Plugin {
 		// statusBarItem5.addEventListener("click", () => {
 		// 	this.moko.adapter.showNotification();
 		// });
+		// MARK test save file
+		const statusBarItem6 = this.addStatusBarLeftItem();
+		statusBarItem6.innerHTML = "saveCurrent";
+		statusBarItem6.addEventListener("click", async () => {
+			this.moko.workspace.save();
+		});
 
 		// MARK ZOOM
 		// const statusBarItem3 = this.addStatusBarLeftItem();

@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-prototype-builtins */
 // import JSON5 from "json5"
-import BuildInToolBarItems from "../BuildInPlugins/BuildInToolBarItem/main.js";
+import BuildInToolBarItems from "../BuildInPlugins/BuildInToolBarItems/main.js";
 import BuildInMokoCommands from "../BuildInPlugins/BuildInMokoCommands/main.js";
+import TestCommands from "../BuildInPlugins/TestCommands/main.js";
 import BuildInEditorCommands from "../BuildInPlugins/BuildInEditorCommands/main.js";
 import BuildInWorkspaceCommands from "../BuildInPlugins/BuildInWorkspaceCommands/main.js";
 import FileExplorer from "../BuildInPlugins/fileExplorer/main.js";
 import WordsCounter from "../BuildInPlugins/wordsCounter/main.js";
-import TestButton from "../BuildInPlugins/testButton/main.js";
+import TestButton from "../BuildInPlugins/TestButton/main.js";
 
 class PluginManager {
 	constructor(moko) {
@@ -15,12 +16,13 @@ class PluginManager {
 		// TODO
 		// this.corePluginsList = this.loadConfigJson();
 		// this.BuildInPluginsList = ["file-explorer", "words-counter", "BuildInToolBarItems", "testButton"];
-		this.BuildInPluginsList = ["BuildInMokoCommands", "BuildInEditorCommands", "BuildInWorkspaceCommands", "BuildInToolBarItems", "file-explorer", "words-counter", "testButton"];
+		this.BuildInPluginsList = ["BuildInMokoCommands", "BuildInEditorCommands", "TestCommands", "BuildInWorkspaceCommands", "BuildInToolBarItems", "file-explorer", "words-counter", "testButton"];
 		if (!this.plugins) this.plugins = {};
 		this.pluginRegistry = {};
 		// TODO自动注册
 		this.registerPlugin("BuildInMokoCommands", BuildInMokoCommands);
 		this.registerPlugin("BuildInEditorCommands", BuildInEditorCommands);
+		this.registerPlugin("TestCommands", TestCommands);
 		this.registerPlugin("BuildInWorkspaceCommands", BuildInWorkspaceCommands);
 		this.registerPlugin("BuildInToolBarItems", BuildInToolBarItems);
 		this.registerPlugin("file-explorer", FileExplorer);

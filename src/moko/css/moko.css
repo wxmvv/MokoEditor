@@ -47,6 +47,7 @@ body.zen-mode {
 }
 .title-bar-drag-region {
 	-webkit-app-region: drag;
+	app-region: drag;
 	-webkit-user-select: none;
 	user-select: none;
 	pointer-events: none;
@@ -188,15 +189,33 @@ body.zen-mode {
 	position: absolute;
 	right: 20px;
 	bottom: calc(var(--status-bar-height) + 20px);
-	width: 400px;
-	max-width: 460px;
+	width: 300px;
+	max-width: 560px;
 	background-color: transparent;
+	/* DOING */
 }
 .notification-item {
-	height: 200px;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	padding: 8px;
+	gap: 8px;
+	height: 80px;
 	width: 100%;
 	box-shadow: var(--shadow);
 	background-color: var(--notification-bg);
+}
+.notification-title {
+	font-size: var(--UI-title-font-size);
+	font-weight: 400;
+}
+.notification-message {
+	font-size: var(--UI-font-size);
+}
+.notification-close {
+	position: absolute;
+	right: 8px;
+	top: 8px;
 }
 
 /* MARK command-palette */

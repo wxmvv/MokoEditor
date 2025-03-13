@@ -1,7 +1,8 @@
 import ToolBarItem from "../../views/content/ToolBarItem";
-import "./TabGroup.css";
 import Svg from "../../model/Svg";
 import CloseSvg from "../../icons/x.svg?raw";
+
+import "./styles/TabGroup.css";
 
 export class TabGroup extends ToolBarItem {
 	onload() {
@@ -18,13 +19,10 @@ export class TabGroup extends ToolBarItem {
 	updateTabs() {
 		this.containerEl.innerHTML = "";
 		this.tabsEl = {};
-		// console.log(this.tabs);
 		this.tabs.forEach((file, index) => {
-			
 			const tabEl = this.containerEl.createDiv("tab");
 			tabEl.classList.add("clickable");
 			const tabCloseButtonEl = tabEl.createDiv("tab-close-button clickable");
-			// const tabModifiedPointEl = tabEl.createDiv("tab-modified");
 			const tabFileNameEl = tabEl.createDiv("tab-file-name");
 			if (file.path === this.pane.currentTabPath) {
 				tabEl.classList.add("active");
@@ -35,41 +33,33 @@ export class TabGroup extends ToolBarItem {
 			}
 			tabFileNameEl.textContent = file.name;
 			tabCloseButtonEl.innerHTML = Svg({ id: "Close", svgRaw: CloseSvg, clickable: true });
-			// tabModifiedPointEl.innerHTML = Svg({ id: "Indicator", svgRaw: IndicatorSvg });
 			tabFileNameEl.addEventListener("click", () => this.selectTab(index));
 			tabCloseButtonEl.addEventListener("click", () => this.closeFile(index));
 			this.tabsEl[file.path] = tabEl;
 		});
 		this.emptyTabEl = this.containerEl.createDiv("empty-tab");
-		this._updateHScrollPosition(this.currentTabIndex);
+		this.autoScrollToActiveTab();
 	}
 	async selectTab(index) {
 		const file = await this.tabs[index]; // this.moko.workspace.openInCurrentTab(file);
 		this.pane.selectTab(file);
-		// this.pane.setFile(file);
 		this.containerEl.querySelectorAll(".tab").forEach((tab) => tab.classList.remove("active")); // 移除所有 Tab 的 active 类
 		this.containerEl.children[index].classList.add("active"); // 为当前 Tab 添加 active 类
-		// 切换到对应的文件内容 // this.switchToFile(this.tabs[index]);
 	}
-	// 关闭文件
+
 	closeFile(index) {
 		this.pane.closeTabByIndex(index);
 	}
 
-	// 更新水平滚动位置
-	_updateHScrollPosition(index) {
-		const itemWidth = this.containerEl.children[index].offsetWidth;
-		const containerWidth = this.containerEl.offsetWidth;
-		const itemLeft = this.containerEl.children[index].offsetLeft;
-		const itemRight = itemWidth + itemLeft;
-		if (itemLeft < this.containerEl.scrollLeft) this.containerEl.scrollLeft = itemLeft;
-		else if (itemRight > this.containerEl.scrollLeft + containerWidth) this.containerEl.scrollLeft = itemRight - containerWidth;
+	autoScrollToActiveTab() {
+		const tab = this.containerEl.querySelector(".tab.active");
+		tab.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
 	}
 }
 
 export default TabGroup;
 
-//TODO
+//TODO DragDrop Tabs
 // a.addEventListener("dragstart", function (e) {
 // 	i.workspace.onDragLeaf(e, i);
 // }),

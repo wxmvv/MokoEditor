@@ -1,5 +1,7 @@
 import ToolBarItem from "../../views/content/ToolBarItem";
-import "./FilePathItem.css";
+
+import "./styles/FilePathItem.css";
+
 export class FilePathItem extends ToolBarItem {
 	onload() {
 		this.fileNameItem = this.containerEl.createDiv("file-name-item");
