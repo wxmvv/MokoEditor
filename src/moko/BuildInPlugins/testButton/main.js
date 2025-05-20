@@ -35,12 +35,12 @@ export class TestButton extends Plugin {
 		// 	this.moko.adapter.ipcRenderer.send("preview-file", "/Users/wxm/test/test.jpg");  //需要传入绝对地址
 		// });
 		// MARK vibrancy menu
-		// const statusBarItem = this.addStatusBarLeftItem();
-		// statusBarItem.innerHTML = "vibrancy menu";
-		// statusBarItem.addEventListener("click", async () => {
-		// 	const a = await this.moko.adapter.ipcRenderer.invoke("menu:showVibrancyMenu"); // vibrancy?: ('appearance-based' 完全透明 | 'titlebar' | 'selection' | 'menu' | 'popover' | 'sidebar' | 'header' | 'sheet' | 'window' | 'hud' | 'fullscreen-ui' | 'tooltip' | 'content' | 'under-window' | 'under-page');
-		// 	console.log("menu:showVibrancyMenu :", a);
-		// });
+		const statusBarItem = this.addStatusBarLeftItem();
+		statusBarItem.innerHTML = "vibrancy menu";
+		statusBarItem.addEventListener("click", async () => {
+			const a = await this.moko.adapter.ipcRenderer.invoke("menu:showVibrancyMenu"); // vibrancy?: ('appearance-based' 完全透明 | 'titlebar' | 'selection' | 'menu' | 'popover' | 'sidebar' | 'header' | 'sheet' | 'window' | 'hud' | 'fullscreen-ui' | 'tooltip' | 'content' | 'under-window' | 'under-page');
+			console.log("menu:showVibrancyMenu :", a);
+		});
 		// MARK context menu
 		// const statusBarItem2 = this.addStatusBarLeftItem();
 		// statusBarItem2.innerHTML = "contextMenu";
@@ -56,11 +56,11 @@ export class TestButton extends Plugin {
 		// 	console.log("open-settings");
 		// });
 		// MARK ZEN mode
-		// const statusBarItem2 = this.addStatusBarLeftItem();
-		// statusBarItem2.innerHTML = "Zen";
-		// statusBarItem2.addEventListener("click", () => {
-		// 	this.moko.toggleZen();
-		// });
+		const statusBarItem2 = this.addStatusBarLeftItem();
+		statusBarItem2.innerHTML = "Zen";
+		statusBarItem2.addEventListener("click", () => {
+			this.moko.SettingManager.toggleZen();
+		});
 		// MARK title get cm color mode
 		// const statusBarItem5 = this.addStatusBarLeftItem();
 		// statusBarItem5.innerHTML = "setTitleColor";

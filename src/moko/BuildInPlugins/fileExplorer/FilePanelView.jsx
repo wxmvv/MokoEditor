@@ -2,10 +2,10 @@
 import { Root, createRoot } from "react-dom/client";
 import { StrictMode } from "react";
 import { FilePanel } from "./FilePanel.jsx";
-import { PanelView } from "../../model/PanelView.js";
+import { SidebarView } from "../../model/SidebarView.js";
 
 export const FilE_PANEL_VIEW = "file-panel-view";
-export class FilePanelView extends PanelView {
+export class FilePanelView extends SidebarView {
 	async onload() {
 		this.root = createRoot(this.containerEl);
 		this.root.render(

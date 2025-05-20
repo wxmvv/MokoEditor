@@ -45,7 +45,7 @@ export class Events {
 			this.tryTrigger(eventsToTrigger[i], args);
 		}
 	}
-
+	
 	tryTrigger(eventObject, args) {
 		try {
 			eventObject.fn.apply(eventObject.ctx, args);
@@ -55,6 +55,7 @@ export class Events {
 			}, 0);
 		}
 	}
+	
 }
 
 export default Events;

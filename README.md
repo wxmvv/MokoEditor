@@ -12,3 +12,8 @@
 - 多平台支持
 - 可轻可重(可以直接打开文件，也可以建立你的储存库)
 
+
+
+| Dark                                | Light                                |
+| ----------------------------------- | ------------------------------------ |
+| ![](https://raw.githubusercontent.com/wxmvv/MokoEditor/refs/heads/main/public/shortcut-dark.png)  | ![](https://raw.githubusercontent.com/wxmvv/MokoEditor/refs/heads/main/public/shortcut-light.png)   |

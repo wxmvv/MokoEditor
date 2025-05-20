@@ -1,12 +1,12 @@
-export class PanelView {
+export class SidebarView {
 	// containerEl: HTMLElement | null;
 	// navigation = false;
 	// closeable = false;
-	constructor(panel) {
+	constructor(sidebar) {
 		this.containerEl = null;
-		this.moko = panel.moko;
+		this.moko = sidebar.moko;
 		this.viewType = this.getViewType() || "panel-view";
-		this.containerEl = panel.containerEl.createDiv(`panel-content ${this.viewType}`);
+		this.containerEl = sidebar.containerEl.createDiv(`panel-content ${this.viewType}`);
 		// MARK
 		// this.headerEl = panel.containerEl.createDiv("panel-title");
 		this.containerEl.setAttribute("data-type", this.getViewType());
@@ -38,4 +38,4 @@ export class PanelView {
 	}
 }
 
-export default PanelView;
+export default SidebarView;

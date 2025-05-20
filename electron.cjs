@@ -102,7 +102,7 @@ app.on("will-quit", () => {
 function createWindow() {
 	const state = loadWindowState();
 	console.log("[state]", state);
-	vibrancy = state.vibrancy || "content";
+	vibrancy = state.vibrancy || "sidebar";
 	mainWindow = new BrowserWindow({
 		width: state.width || 450, // Default is 800
 		height: state.height || 600, // Default is 600
@@ -241,7 +241,7 @@ function createWindow() {
 	});
 	mainWindow.webContents.on("did-frame-finish-load", async () => {
 		if (state.isDevToolsOpened) {
-			mainWindow.webContents.openDevTools({mode: "detach"}); //{mode: "detach"}
+			mainWindow.webContents.openDevTools({ mode: "detach" }); //{mode: "detach"}
 			mainWindow.webContents.executeJavaScript(`document.body.classList.add('devtools-opened');`);
 		}
 		if (mainWindow.webContents.isDevToolsOpened()) {
@@ -265,7 +265,7 @@ function createWindow() {
 	if (process.env.NODE_ENV === "development") {
 		console.log("[Electron] Vite 开发环境：加载localhost:5173");
 		mainWindow.loadURL("http://localhost:5173/");
-		installExtensions();
+		// installExtensions();
 	} else {
 		// 生产环境：加载打包后的静态文件
 		console.log("生产环境：加载打包后的静态文件");
@@ -302,8 +302,8 @@ appIpcOns["show-context-menu2"] = (app) => {
 };
 appIpcOns["show-notification"] = (app) => {
 	ipcMain.on("show-notification", (event, options) => {
-		console.log("show-notification 如果通知成功但是啥也看不到，请检查系统通知权限");
-		console.log("Notification.isSupported() : ", Notification.isSupported());
+		// console.log("show-notification 如果通知成功但是啥也看不到，请检查系统通知权限");
+		// console.log("Notification.isSupported() : ", Notification.isSupported());
 		if (!Notification.isSupported() && !options) return;
 		const notification = new Notification({
 			title: options.title || "通知title",
@@ -508,28 +508,11 @@ function saveWindowState(window) {
 	fs.writeFileSync(windowStatePath, JSON.stringify(state));
 }
 // 创建 vibrancy 菜单
-const vibrancyTypes = [
-	"none",
-	"appearance-based",
-	"titlebar",
-	"selection",
-	"menu",
-	"popover",
-	"sidebar",
-	"header",
-	"sheet",
-	"window",
-	"hud",
-	"fullscreen-ui",
-	"tooltip",
-	"content",
-	"under-window",
-	"under-page",
-];
+const vibrancyTypes = [null, "titlebar", "selection", "menu", "popover", "sidebar", "header", "sheet", "window", "hud", "fullscreen-ui", "tooltip", "content", "under-window", "under-page"];
 function createVibrancyMenu() {
 	const vibrancyMenu = Menu.buildFromTemplate(
 		vibrancyTypes.map((type) => ({
-			label: type,
+			label: type ? type : "null",
 			type: "radio",
 			checked: type === vibrancy,
 			click: () => {
@@ -673,44 +656,3 @@ async function installExtensions() {
 	await installExtension(REACT_DEVELOPER_TOOLS);
 }
 
-// MARK 创建设定窗口
-// 目前问题 无法添加交通灯按钮
-// function createSettingsWindow() {
-// 	settingsWindow = new BrowserWindow({
-// 		width: 400,
-// 		height: 300,
-// 		parent: mainWindow,
-// 		modal: true,
-// 		frame: true,
-// 		titleBarStyle: "hidden", // 隐藏标题栏
-// 		autoHideMenuBar: false,
-// 		trafficLightPosition: { x: 5, y: 5 }, // 设置交通灯按钮位置
-// 		// titleBarOverlay: true,
-// 		titleBarOverlay: {
-// 			color: "#2f3241",
-// 			symbolColor: "#74b1be",
-// 			height: 60,
-// 		},
-// 		resizable: false, // Default is true.
-// 		minimizable: false, //macos windows only. Default is true.
-// 		maximizable: false, //macos windows only. Default is true.
-// 		transparent: false,
-// 		webPreferences: {
-// 			nodeIntegration: true,
-// 			contextIsolation: false,
-// 			tabbingIdentifier: "moko",
-// 			sandbox: false,
-// 			transparent: false,
-// 		},
-// 	});
-// 	// settingsWindow.loadFile("settings.html");
-
-// 	settingsWindow.once("ready-to-show", () => {
-// 		settingsWindow.show();
-// 	});
-
-// 	settingsWindow.on("closed", () => {
-// 		settingsWindow = null;
-// 	});
-// 	settingsWindow.loadURL("http://localhost:5173/");
-// }

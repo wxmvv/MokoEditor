@@ -88,6 +88,8 @@ export class Pane extends Events {
 			if (this.view instanceof FileView) await this.setFile(viewState.file);
 			else await this.view.setState(state, openOptions); // TODO 需要精简
 			await this.view.focus(); // 打开后自动 auto focus
+			// DOING
+			await this.workspace._setActivePane(this);
 			this._updateTabs(); // 更新tab 并autoPositionTab
 		} catch (error) {
 			console.error(error);

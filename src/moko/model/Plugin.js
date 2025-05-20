@@ -76,10 +76,10 @@ class Plugin extends Component {
 			return this.moko.ViewRegistry.unregisterView(viewType);
 		});
 	}
-	registerPanel(viewType, View) {
-		this.moko.PanelRegistry.registerPanel(viewType, View);
+	registerSidebar(viewType, View) {
+		this.moko.SidebarRegistry.registerSidebar(viewType, View);
 		this.register(function () {
-			return this.moko.PanelRegistry.unregisterView(viewType);
+			return this.moko.SidebarRegistry.unregisterSidebar(viewType);
 		});
 	}
 

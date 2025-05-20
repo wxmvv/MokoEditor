@@ -10,7 +10,7 @@ import TitleBar from "./views/TitleBar.js";
 import Setting from "./views/setting/Setting.js";
 import Modal from "./views/Modal.js";
 // registry
-import { PanelRegistry } from "./manager/registry/PanelRegistry.js";
+import { SidebarRegistry } from "./manager/registry/SidebarRegistry.js";
 import { ViewRegistry } from "./manager/registry/ViewRegistry.js";
 import { ToolBarItemRegistry } from "./manager/registry/ToolBarItemRegistry.js";
 import { EmbedRegistry } from "./manager/registry/EmbedRegistry.js";
@@ -24,7 +24,6 @@ import FileManager from "./manager/FileManager.js";
 import PluginManager from "./manager/PluginManager.js";
 import InternalNotification from "./views/InternalNotification.js";
 import CommandPalette from "./views/CommandPalette.js";
-import ElectronAdapter from "./manager/adapter/ElectronAdapter.js";
 //state json
 import JSON5 from "json5";
 import libraryStateJson from "./manifest/User/state/library.json?raw";
@@ -58,7 +57,7 @@ class moko {
 		ProgressBar.instance.setMessage("[moko] Init Registry...");
 		this.ToolBarItemRegistry = new ToolBarItemRegistry(this);
 		this.ViewRegistry = new ViewRegistry(this);
-		this.PanelRegistry = new PanelRegistry(this);
+		this.SidebarRegistry = new SidebarRegistry(this);
 		this.EmbedRegistry = new EmbedRegistry(this);
 		this.SettingRegistry = new SettingRegistry(this);
 		this.ToolBarRegistry = new ToolBarRegistry(this);
@@ -96,8 +95,7 @@ class moko {
 		this.InternalNotification = new InternalNotification(this); // MARK notification & command palette
 		this.CommandPalette = new CommandPalette(this);
 
-		// this.InternalNotification.addItem("欢迎使用Moko", "6666");
-		// this.adapter.showNotification({ title: "欢迎使用Moko", subtitle: "6666", body: "牛🐮" });
+		this.InternalNotification.addItem("欢迎使用Moko", "6666");
 		this.JSON5 = JSON5;
 		window.moko = this;
 		ProgressBar.instance.setMessage("[moko] 初始化完毕!");
@@ -109,80 +107,24 @@ class moko {
 		return MOKO_VERSION;
 	}
 
+	// 获取并储存实例
 	addElement(key, el) {
 		this.elements[key] = el;
 	}
 
-	// MARK 使用默认应用打开文件
+	// 使用默认应用打开文件
 	async openWithDefaultApp(filePath) {
-		const adapter = this.adapter;
-
-		// 检查是否是桌面应用，并且适配器是特定类型
-		if (this.uaInfo.isDesktopApp && adapter instanceof ElectronAdapter) {
-			const fullPath = adapter.getFullPath(filePath);
-			// 如果是桌面应用且适配器为特定类型，则使用桌面应用打开文件
-			try {
-				const { shell } = await window.require("electron");
-				const path = await window.require("path");
-				console.log("openWithDefaultApp fullPath", fullPath);
-				// 目前有个问题，打开文件名index.html会重载文件 解决问题
-				if (path.basename(fullPath) === "index.html") return;
-				if (shell) {
-					if (shell.openPath) {
-						shell.openPath(fullPath);
-					} else {
-						shell.openItem(fullPath);
-					}
-					return;
-				}
-			} catch (error) {
-				throw new Error(`openWithDefaultApp Load File Error: filepath: ${filePath}, error: ${error.message}`);
-			}
-		} else if (this.uaInfo.isMobile) {
-			// } else if (this.uaInfo.isMobile && kO && adapter instanceof MX) {
-			// 如果是移动应用且适配器为特定类型，则不执行任何操作
-			return;
-		}
-		await adapter.openWithDefaultApp(filePath);
+		await this.adapter.openWithDefaultApp(filePath);
 	}
 
+	// 使用默认应用打开链接url
 	async openExternal(filePath) {
-		const adapter = this.adapter;
-		await adapter.openExternal(filePath);
+		await this.adapter.openExternal(filePath);
 	}
 
-	// MARK Zen Mode
-	isZen() {
-		return document.body.classList.contains("zen-mode");
-	}
-	Zen() {
-		document.body.style.setProperty("--editor-tool-bar-opacity", "0");
-		document.body.style.setProperty("--editor-tool-bar-height", "0px");
-		document.body.style.setProperty("--editor-tool-bar-border-bottom", "none");
-		document.body.style.setProperty("--tab-bar-opacity", "0");
-		document.body.style.setProperty("--tab-bar-height", "0px");
-		document.body.style.setProperty("--tab-bar-border-top", "none");
-		document.body.style.setProperty("--title-bar-bg", "var(--cm-bg)");
-		document.body.classList.add("zen-mode");
-		this.titleBar.setTitle("");
-	}
-	unZen() {
-		document.body.style.setProperty("--editor-tool-bar-opacity", "1");
-		document.body.style.setProperty("--editor-tool-bar-height", "36px");
-		document.body.style.setProperty("--editor-tool-bar-border-bottom", "var(--border)");
-		document.body.style.setProperty("--tab-bar-opacity", "1");
-		document.body.style.setProperty("--tab-bar-height", "30px");
-		document.body.style.setProperty("--tab-bar-border-top", "var(--border)");
-		document.body.style.setProperty("--title-bar-bg", "rgba(var(--gray-6-rgb), 0.7)");
-		document.body.classList.remove("zen-mode");
-		this.titleBar.setTitle(this.title);
-	}
-	toggleZen() {
-		if (this.isZen()) {
-			this.unZen();
-		} else {
-			this.Zen();
-		}
+	// showNotification
+	showNotification(options) {
+		this.adapter.showNotification(options);
 	}
 }
 

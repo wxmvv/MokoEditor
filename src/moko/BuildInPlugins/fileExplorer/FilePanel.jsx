@@ -108,10 +108,12 @@ export function FilePanel({ mokoRef }) {
 		//selectedItems // console.log("Selected items:", selectedItems.map((item) => item).join(", "));
 	}
 	function handleTarget() {
-		// console.log(tree, mokoRef.current.workspace.activePane.getFile());
-		const file = mokoRef.current.workspace.activePane.getFile();
-		tree.current.focusItem(file.path);
-		tree.current.selectItems([file.path]);
+		const activePane = mokoRef.current.workspace.activePane;
+		if (activePane) {
+			const file = activePane.getFile();
+			tree.current.focusItem(file.path);
+			tree.current.selectItems([file.path]);
+		}
 	}
 	function handleCollapseAll() {
 		tree.current.collapseAll();

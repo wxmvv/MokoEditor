@@ -6,7 +6,7 @@ import Plugin from "../model/Plugin";
 import SettingsBtnSvg from "../icons/file_icons/settings.svg?raw";
 import { Svg } from "../model/Svg";
 
-// TODO 
+// TODO
 // 1. 目前导入顺序有问题
 
 class SettingManager extends Plugin {
@@ -71,6 +71,21 @@ class SettingManager extends Plugin {
 	getSetting(SettingName) {
 		const SettingValue = this.setting[SettingName];
 		return SettingValue ? this.defaultSetting[SettingName] : SettingValue;
+	}
+
+	// MARK Zen Mode
+	isZen() {
+		return document.body.classList.contains("zen-mode");
+	}
+	Zen() {
+		document.body.classList.add("zen-mode");
+	}
+	unZen() {
+		document.body.classList.remove("zen-mode");
+	}
+	toggleZen() {
+		if (this.isZen()) this.unZen();
+		else this.Zen();
 	}
 }
 

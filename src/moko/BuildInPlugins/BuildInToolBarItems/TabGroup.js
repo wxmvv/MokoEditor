@@ -53,7 +53,7 @@ export class TabGroup extends ToolBarItem {
 
 	autoScrollToActiveTab() {
 		const tab = this.containerEl.querySelector(".tab.active");
-		tab.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+		if (tab) tab.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
 	}
 }
 

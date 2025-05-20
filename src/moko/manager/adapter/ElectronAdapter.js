@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Adapter from "./Adapter";
-
+import PQueue from 'p-queue';
+//TODO operationQueue 操作队列
+// https://www.npmjs.com/package/p-queue
 export class ElectronAdapter extends Adapter {
 	constructor() {
 		super();
@@ -372,6 +374,7 @@ export class ElectronAdapter extends Adapter {
 	}
 	// MARK shell openExternal openPath
 	async openWithDefaultApp(filePath) {
+		console.log("[Electron Adapter] openWithDefaultApp", filePath);
 		const shell = this.electron.shell;
 		if (shell) {
 			shell.openPath(filePath);

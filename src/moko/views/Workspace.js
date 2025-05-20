@@ -1,4 +1,4 @@
-import Panel from "./workspace/Panel";
+import Sidebar from "./workspace/Sidebar";
 import EditorView from "./content/EditorView";
 import Pane from "./workspace/Pane";
 import Events from "../model/Events";
@@ -37,14 +37,11 @@ class Workspace extends Events {
 		this.activeView = null;
 		this.activeEditor = null; // 当前激活的 编辑器 包含toolbar 和 editor
 		this._panes = [];
-		// Panel
-		this.primary_siderbar = null; //TODO left
-		this.secondary_siderbar = null; //TODO right
-		this.activePanel = null;
-		this.activePanelType = null;
-		this.panelsList = {};
-		this.panel = new Panel(this);
-		this.enbledPanelTypes = ["file-panel-view"];
+		// Sidebar
+		this.primary_siderbar = new Sidebar(this, true); //TODO left
+		this.secondary_siderbar = new Sidebar(this, false); //TODO right
+		this.enbledPrimarySidebarTypes = ["file-panel-view"];
+		this.enbledSecondarySidebarTypes = ["file-panel-view"];
 		// config
 		this.config = {
 			startupEditor: "xxx", // none welcome newUntitledFile // none 启动时不打开编辑器 welcome 打开包含帮助使用的链接的欢迎页面 newUntitledFile 打开无标题文本文件(仅在打开空窗口使用)
@@ -68,25 +65,13 @@ class Workspace extends Events {
 		// on('window-close') // a popout window is closed.
 		// on('window-open') // a popout window is opened.
 	}
-	// onCmEvents(cmInstance) {
-	// 	cmInstance.on("change", (cm) => this.trigger("editor-change", cm));
-	// 	cmInstance.on("cursorActivity", (cm) => this.trigger("editor-cursorActivity", cm));
-	// 	cmInstance.on("focus", (cm) => this.trigger("editor-focus", cm));
-	// 	cmInstance.on("blur", (cm) => this.trigger("editor-blur", cm));
-	// }
-	undo() {
-		console.log("[workspace] undo", this.activeEditor);
-		this.activeEditor.undo();
-	}
-	redo() {
-		console.log("[workspace] redo", this.activeEditor);
-		this.activeEditor.redo();
-	}
+
 	// Init
 	load(workspaceState) {
 		if (!workspaceState) console.log("[workspace] no state, use default");
 		else console.log("[workspace] load state", workspaceState);
-		this.loadPanelViews();
+		this.primary_siderbar.loadSidebarViews(this.enbledPrimarySidebarTypes);
+		this.secondary_siderbar.loadSidebarViews(this.enbledSecondarySidebarTypes);
 		this.setState(workspaceState);
 	}
 
@@ -108,6 +93,22 @@ class Workspace extends Events {
 			primary_siderbar,
 			secondary_siderbar,
 		};
+	}
+
+	// onCmEvents(cmInstance) {
+	// 	cmInstance.on("change", (cm) => this.trigger("editor-change", cm));
+	// 	cmInstance.on("cursorActivity", (cm) => this.trigger("editor-cursorActivity", cm));
+	// 	cmInstance.on("focus", (cm) => this.trigger("editor-focus", cm));
+	// 	cmInstance.on("blur", (cm) => this.trigger("editor-blur", cm));
+	// }
+
+	undo() {
+		console.log("[workspace] undo", this.activeEditor);
+		this.activeEditor.undo();
+	}
+	redo() {
+		console.log("[workspace] redo", this.activeEditor);
+		this.activeEditor.redo();
 	}
 	// MARK PaneState
 	async setPanesState(panesState, active_pane_id) {
@@ -182,6 +183,12 @@ class Workspace extends Events {
 			this.workspace.containerEl.appendChild(this.activePane.containerEl);
 		}
 	}
+	// Sidebar
+	toggleSidebarByType(type) {
+		this.primary_siderbar.toggleSidebarByType(type);
+		this.secondary_siderbar.toggleSidebarByType(type);
+	}
+
 	// TODO 待完善
 	async save() {
 		// console.log(this.activePane, this.activeEditor);
@@ -228,48 +235,6 @@ class Workspace extends Events {
 		return activeFileView ? activeFileView.file : null; // 如果活动文件视图存在，则返回其文件属性，否则返回 null
 	}
 
-	// MARK Panel
-	loadPanelViews() {
-		if (!this.enbledPanelTypes || this.enbledPanelTypes.length == 0) return;
-		for (const PanelTypeName of this.enbledPanelTypes) this.loadPanelView(PanelTypeName);
-	}
-	loadPanelView(PanelTypeName) {
-		this.panelsList[PanelTypeName] = this.moko.PanelRegistry.panelByType[PanelTypeName](this.moko.workspace.panel); // 传参
-		this.panelsList[PanelTypeName].containerEl.style.display = "none";
-		this.panelsList[PanelTypeName].load();
-	}
-
-	togglePanel(PanelTypeName) {
-		if (this.panel.collapsed) {
-			this.switchPanel(PanelTypeName);
-			this.openPanel(PanelTypeName);
-		} else {
-			if (this.activePanelType == PanelTypeName) {
-				if (this.activePane) this.activePane.focus(); // 宽度问题
-				this.closePanel();
-			} else {
-				this.switchPanel(PanelTypeName);
-				this.openPanel(PanelTypeName);
-			}
-		}
-	}
-	switchPanel(PanelTypeName) {
-		Object.keys(this.panelsList).forEach((panelName) => {
-			if (panelName !== PanelTypeName) this.panelsList[panelName].containerEl.style.display = "none"; // 遍历所有 panel，将除当前 PanelTypeName 之外的所有 panel 隐藏
-		});
-		this.setActivePanel(this.panelsList[PanelTypeName]);
-		this.activePanelType = PanelTypeName;
-		this.activePanel.containerEl.style.display = "";
-	}
-	setActivePanel(panel) {
-		this.activePanel = panel;
-	}
-	openPanel() {
-		this.panel.expand();
-	}
-	closePanel() {
-		this.panel.collapse();
-	}
 	// MARK Watermark 水印
 	setWatermark() {
 		this._watermarkEl = this.containerEl.createDiv("workspace-watermark");

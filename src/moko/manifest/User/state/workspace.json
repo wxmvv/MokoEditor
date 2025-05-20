@@ -4,15 +4,19 @@
 		{
 			"id": "pane1",
 			"type": "pane",
-			"currentTabPath": "src/moko/TODO.md",
+			"currentTabPath": "markdown.md",
 			"tabs": [
+				{
+					"name": "markdown.md",
+					"path": "markdown.md"
+				},
 				{
 					"name": "欢迎",
 					"path": "welcome"
 				},
 				{
 					"name": "TODO.md",
-					"path": "src/moko/TODO.md"
+					"path": "/Users/wxm/Developer/Moko/Moko/TODO.md"
 				},
 				{
 					"name": "moko.js",

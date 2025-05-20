@@ -84,7 +84,8 @@ body {
 
 	/* shadow */
 	/* --shadow: 0 2px 10px rgba(0, 0, 0, 0.1); */
-	--shadow: rgba(0, 0, 0, 0.16) 0px 0px 8px 2px;
+	/* --shadow: rgba(0, 0, 0, 0.16) 0px 0px 8px 2px; */
+	--shadow: rgba(0, 0, 0, 0.24) 0px 0px 8px 2px;
 
 	/* Line heights */
 	--line-height-normal: 1.5;
