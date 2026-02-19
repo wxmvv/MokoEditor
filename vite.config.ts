@@ -1,9 +1,10 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 // import { viteStaticCopy } from "vite-plugin-static-copy";
 // https://vitejs.dev/config/
+
 export default defineConfig({
-	base: "./",
+	base: './',
 	define: {
 		// __filename: JSON.stringify(path.resolve(__dirname)),
 		// __dirname: JSON.stringify(path.resolve(__dirname)),
@@ -14,23 +15,23 @@ export default defineConfig({
 		alias: [
 			// { find: "codemirrorjs", replacement: "/lib/codemirror.js" },
 			// "@"
-		],
+		]
 	},
 	build: {
 		// target: "esnext",
-		outDir: "app",
-		assetsDir: "assets",
+		outDir: 'app',
+		assetsDir: 'assets',
 		rollupOptions: {
 			// input: {
 			// 	app: path.resolve(__dirname, "src/main.jsx"),
 			// },
 			// external: "/lib/cm/codemirror.js",
 			// plugins: [copy({ targets: [{ src: "lib", dest: "mobile/lib" }] })],
-		},
+		}
 	},
-	publicDir: "public",
+	publicDir: 'public',
 	plugins: [
-		react(),
+		react()
 		// viteStaticCopy({
 		// 	targets: [
 		// 		{
@@ -39,5 +40,5 @@ export default defineConfig({
 		// 		},
 		// 	],
 		// }),
-	],
+	]
 });

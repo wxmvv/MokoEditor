@@ -1,37 +1,45 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-require-imports */
-// MARK ES5
-const { Tray, powerMonitor, app, BrowserWindow, ipcMain, nativeTheme, dialog, Menu, globalShortcut, Notification } = require("electron");
-const path = require("node:path");
-const fs = require("original-fs");
-const menutemp = require("./electron-menu.cjs");
-const process = require("process");
+const {
+	Tray,
+	powerMonitor,
+	app,
+	BrowserWindow,
+	ipcMain,
+	nativeTheme,
+	dialog,
+	Menu,
+	globalShortcut,
+	Notification
+} = require('electron');
+const path = require('node:path');
+const fs = require('original-fs');
+const menutemp = require('./electron-menu.cjs');
+const process = require('process');
 const platform = process.platform;
-const isMac = platform === "darwin";
-const isWin = platform === "win32";
+const isMac = platform === 'darwin';
+const isWin = platform === 'win32';
+
 // const isLinux = platform === "linux";
-if (platform === "darwin") {
-	console.log("当前平台是 macOS"); // 在这里添加 macOS 特定的代码
-} else if (platform === "win32") {
-	console.log("当前平台是 Windows"); // 在这里添加 Windows 特定的代码
-} else if (platform === "linux") {
-	console.log("当前平台是 Linux"); // 在这里添加 Linux 特定的代码
+if (platform === 'darwin') {
+	console.log('当前平台是 macOS'); // 在这里添加 macOS 特定的代码
+} else if (platform === 'win32') {
+	console.log('当前平台是 Windows'); // 在这里添加 Windows 特定的代码
+} else if (platform === 'linux') {
+	console.log('当前平台是 Linux'); // 在这里添加 Linux 特定的代码
 } else {
-	console.log("未知平台:", platform); // 在这里添加未知平台的处理代码
+	console.log('未知平台:', platform); // 在这里添加未知平台的处理代码
 }
 
-// MARK 解决报错
 // 禁用GPU复合 为了解决报错
 // https://github.com/electron/electron/issues/43415
 // https://www.electronjs.org/zh/docs/latest/api/command-line-switches
-app.commandLine.appendSwitch("disable-gpu-compositing");
+app.commandLine.appendSwitch('disable-gpu-compositing');
 // const a = app.commandLine.hasSwitch("disable-gpu");
 // console.log("app.commandLine.hasSwitch('disable-gpu')", a);
 // app.commandLine.appendSwitch("disable-gpu");
-process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true"; // 关闭CSP警告
+process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true'; // 关闭CSP警告
 
 // MARK 初始化
-console.log("Hello from Electron 👋");
+console.log('Hello from Electron 👋');
 let mainWindow;
 // let devToolsWindow = null;
 // let settingsWindow;
@@ -42,7 +50,7 @@ const appIpcOns = {};
 let vibrancy;
 
 // MARK 入口
-app.once("ready", function () {
+app.once('ready', function () {
 	getInfo();
 	createWindow();
 	// MARK app IpcMain
@@ -61,23 +69,23 @@ function genHotkey() {
 }
 
 // MARK app 事件
-app.on("web-contents-created", (event, contents) => {
-	contents.on("ipc-message", (event, channel, message) => {
-		if (channel === "set-theme") {
+app.on('web-contents-created', (event, contents) => {
+	contents.on('ipc-message', (event, channel, message) => {
+		if (channel === 'set-theme') {
 			nativeTheme.themeSource = message; // 'light', 'dark', 'system'
 		}
 	});
 }); // 处理主题切换请求
-app.on("window-all-closed", function () {
+app.on('window-all-closed', function () {
 	// Quit when all windows are closed.
-	if (process.platform !== "darwin") app.quit(); // On macOS it is common for applications and their menu bar // to stay active until the user quits explicitly with Cmd + Q
+	if (process.platform !== 'darwin') app.quit(); // On macOS it is common for applications and their menu bar // to stay active until the user quits explicitly with Cmd + Q
 });
-app.on("activate", function () {
+app.on('activate', function () {
 	// 针对 MacOS 的行为 https://www.electronjs.org/zh/docs/latest/tutorial/tutorial-first-app // On macOS it's common to re-create a window in the app when the  dock icon is clicked and there are no other windows open.
 	if (mainWindow === null) createWindow(); //第一种
 	// if (BrowserWindow.getAllWindows().length === 0) createWindow(); // 第二种 解决方式
 });
-app.on("will-quit", () => {
+app.on('will-quit', () => {
 	globalShortcut.unregisterAll(); // 注销所有快捷键 // 注销快捷键 // globalShortcut.unregister("CommandOrControl+X");
 });
 
@@ -101,8 +109,8 @@ app.on("will-quit", () => {
 // https://www.electronjs.org/docs/latest/api/base-window
 function createWindow() {
 	const state = loadWindowState();
-	console.log("[state]", state);
-	vibrancy = state.vibrancy || "sidebar";
+	console.log('[state]', state);
+	vibrancy = state.vibrancy || 'sidebar';
 	mainWindow = new BrowserWindow({
 		width: state.width || 450, // Default is 800
 		height: state.height || 600, // Default is 600
@@ -128,7 +136,7 @@ function createWindow() {
 		hiddenInMissionControl: false, //macos only. Default is false.
 		kiosk: false, // Default is false.
 		// title: "Moko",
-		icon: path.join(__dirname, "icon.png"), //TODO
+		icon: path.join(__dirname, 'icon.png'), //TODO
 		show: true, // Default is true.
 		frame: false, // Default is true. https://www.electronjs.org/docs/latest/tutorial/window-customization#create-frameless-windows
 		parent: null, // Default is null.
@@ -137,28 +145,28 @@ function createWindow() {
 		disableAutoHideCursor: false, // Whether to hide cursor when typing. Default is false.
 		autoHideMenuBar: false, //  Auto hide the menu bar unless the Alt key is pressed. Default is false.  窗口菜单栏是否自动隐藏。 一旦设置，菜单栏将只在用户单击 Alt 键时显示。
 		enableLargerThanScreen: false, // macos only. Enable the window to be resized larger than screen. Only relevant for macOS, as other OSes allow larger-than-screen windows by default. Default is false.
-		backgroundColor: "rgba(0,0,0,0)", // win.setBackgroundColor nativeTheme.shouldUseDarkColors ? "#000" : "#fff",
+		backgroundColor: 'rgba(0,0,0,0)', // win.setBackgroundColor nativeTheme.shouldUseDarkColors ? "#000" : "#fff",
 		hasShadow: true, // Default is true.
 		opacity: 1, // macos windows only. Default is 1.
 		darkTheme: false, // Forces using dark theme for the window, only works on some GTK+3 desktop environments. Default is false.
 		transparent: false, // transparent boolean (optional) - Makes the window transparent. Default is false. On Windows, does not work unless the window is frameless.
 		// type: "normal", //default is normal window
-		visualEffectState: "active", // macos only, followWindow active inactive
-		titleBarStyle: isMac ? "customButtonsOnHover" : " hidden", //customButtonsOnHover  default hidden macOS-hiddenInset macOS-customButtonsOnHover
+		visualEffectState: 'active', // macos only, followWindow active inactive
+		titleBarStyle: isMac ? 'customButtonsOnHover' : ' hidden', //customButtonsOnHover  default hidden macOS-hiddenInset macOS-customButtonsOnHover
 		titleBarOverlay: false, // ?
 		trafficLightPosition: { x: 10, y: 6 }, // macos only
 		roundedCorners: true, // macos only
 		thickFrame: true, // Default is true.
-		vibrancy: vibrancy || "sidebar", // macos only // vibrancy?: ('appearance-based' 不存在 | 'titlebar' | 'selection' | 'menu' | 'popover' | 'sidebar' | 'header' | 'sheet' | 'window' | 'hud' | 'fullscreen-ui' | 'tooltip' | 'content' | 'under-window' | 'under-page');
-		backgroundMaterial: "acrylic", // windows only `auto`, `none`, `mica`, `acrylic` or `tabbed`
+		vibrancy: vibrancy || 'sidebar', // macos only // vibrancy?: ('appearance-based' 不存在 | 'titlebar' | 'selection' | 'menu' | 'popover' | 'sidebar' | 'header' | 'sheet' | 'window' | 'hud' | 'fullscreen-ui' | 'tooltip' | 'content' | 'under-window' | 'under-page');
+		backgroundMaterial: 'acrylic', // windows only `auto`, `none`, `mica`, `acrylic` or `tabbed`
 		// zoomToPageWidth: false, // macos only
-		tabbingIdentifier: "moko", // macos only
+		tabbingIdentifier: 'moko', // macos only
 		webPreferences: {
 			devTools: true,
 			nodeIntegration: true,
 			// nodeIntegrationInWorker: false, //Default is false  //多线程node https://www.electronjs.org/zh/docs/latest/tutorial/multithreading
 			// nodeIntegrationInSubFrames
-			preload: path.join(__dirname, "electron-preload.cjs"), //预加载
+			preload: path.join(__dirname, 'electron-preload.cjs'), //预加载
 			sandbox: false, //默认为false  true会将 Web 内容放入沙盒环境中，限制其访问 Node.js 环境
 			// session
 			// partition
@@ -191,14 +199,14 @@ function createWindow() {
 			// navigateOnDragDrop : true, // Default is false. TODO
 			// autoplayPolicy: "no-user-gesture-required",  //no-user-gesture-required, user-gesture-required, document-user-activation-required. Defaults to no-user-gesture-required.
 			// disableHtmlFullscreenWindowResize : false,
-			accessibleTitle: "Moko",
+			accessibleTitle: 'Moko',
 			// spellcheck: true,
 			// enableWebSQL: true,
 			// v8CacheOptions: code, //none code bypassHeatCheck bypassHeatCheckAndEagerCompile
 			// enablePreferredSizeMode:false,
 			// transparent: true, // Default is true
-			enableRemoteModule: false, //默认值为 false。如果设置为 true，可以在渲染进程中使用 remote 模块访问主进程的对象和方法。出于安全考虑，不推荐启用。
-		},
+			enableRemoteModule: false //默认值为 false。如果设置为 true，可以在渲染进程中使用 remote 模块访问主进程的对象和方法。出于安全考虑，不推荐启用。
+		}
 	});
 	if (state.isMaximized) mainWindow.maximize();
 	if (state.isMinimized) mainWindow.minimize();
@@ -209,23 +217,23 @@ function createWindow() {
 	// app.clearRecentDocuments(); // 清除最近打开的文件
 	// app.setProxy()
 	// MARK 监听App
-	app.on("quit", () => {
-		console.log("[app quit]");
+	app.on('quit', () => {
+		console.log('[app quit]');
 	});
 	// app.on("before-quit", () => console.log("[app before-quit]"));
 
 	// MARK 监听window
-	mainWindow.on("close", () => {
-		console.log("[win close]");
+	mainWindow.on('close', () => {
+		console.log('[win close]');
 		saveWindowState(mainWindow);
 	});
-	mainWindow.on("closed", function () {
+	mainWindow.on('closed', function () {
 		mainWindow = null;
-		ipcMain.removeHandler("dialog:showOpenDialog");
+		ipcMain.removeHandler('dialog:showOpenDialog');
 	});
 
 	// MARK 监听webContents
-	mainWindow.webContents.on("devtools-opened", () => {
+	mainWindow.webContents.on('devtools-opened', () => {
 		mainWindow.webContents.executeJavaScript(`
 			document.body.classList.add('devtools-opened');
 		`);
@@ -234,15 +242,17 @@ function createWindow() {
 			location.reload();
 		`);
 	});
-	mainWindow.webContents.on("devtools-closed", () => {
+	mainWindow.webContents.on('devtools-closed', () => {
 		mainWindow.webContents.executeJavaScript(`
 			document.body.classList.remove('devtools-opened');
 		`);
 	});
-	mainWindow.webContents.on("did-frame-finish-load", async () => {
+	mainWindow.webContents.on('did-frame-finish-load', async () => {
 		if (state.isDevToolsOpened) {
-			mainWindow.webContents.openDevTools({ mode: "detach" }); //{mode: "detach"}
-			mainWindow.webContents.executeJavaScript(`document.body.classList.add('devtools-opened');`);
+			mainWindow.webContents.openDevTools({ mode: 'detach' }); //{mode: "detach"}
+			mainWindow.webContents.executeJavaScript(
+				`document.body.classList.add('devtools-opened');`
+			);
 		}
 		if (mainWindow.webContents.isDevToolsOpened()) {
 			mainWindow.webContents.executeJavaScript(`
@@ -254,22 +264,28 @@ function createWindow() {
 
 	// MARK 其他监听
 	// 监听系统主题变化 检查当前系统是否是深色模式并将其发送到前端
-	nativeTheme.on("updated", () => {
-		mainWindow.webContents.send("theme-changed", nativeTheme.shouldUseDarkColors);
+	nativeTheme.on('updated', () => {
+		mainWindow.webContents.send(
+			'theme-changed',
+			nativeTheme.shouldUseDarkColors
+		);
 	});
-	mainWindow.webContents.on("did-finish-load", () => {
-		mainWindow.webContents.send("theme-changed", nativeTheme.shouldUseDarkColors);
+	mainWindow.webContents.on('did-finish-load', () => {
+		mainWindow.webContents.send(
+			'theme-changed',
+			nativeTheme.shouldUseDarkColors
+		);
 	});
 
 	// MARK 加载应用
-	if (process.env.NODE_ENV === "development") {
-		console.log("[Electron] Vite 开发环境：加载localhost:5173");
-		mainWindow.loadURL("http://localhost:5173/");
+	if (process.env.NODE_ENV === 'development') {
+		console.log('[Electron] Vite 开发环境：加载localhost:5173');
+		mainWindow.loadURL('http://localhost:5173/');
 		// installExtensions();
 	} else {
 		// 生产环境：加载打包后的静态文件
-		console.log("生产环境：加载打包后的静态文件");
-		mainWindow.loadFile(path.join(__dirname, "app", "index.html"));
+		console.log('生产环境：加载打包后的静态文件');
+		mainWindow.loadFile(path.join(__dirname, 'app', 'index.html'));
 	}
 	// MARK window IpcMain
 	ipcMain.removeAllListeners(Object.keys(winIpcOns)); // 先清空所有handle 和 on
@@ -281,34 +297,35 @@ function createWindow() {
 
 // MARK app Ons Handles
 // TODO 监听来自渲染进程的右键菜单请求 // menu 鼠标右键点击menu
-appIpcOns["show-context-menu1"] = (app) => {
-	ipcMain.on("show-context-menu", (event, menuItems) => {
+appIpcOns['show-context-menu1'] = (app) => {
+	ipcMain.on('show-context-menu', (event, menuItems) => {
 		const template = menuItems.map((item) => {
 			return {
 				label: item.label,
-				click: () => event.sender.send("context-menu-action", item.label), // 将执行结果返回给渲染进程 //   event.returnValue = true;
+				click: () =>
+					event.sender.send('context-menu-action', item.label) // 将执行结果返回给渲染进程 //   event.returnValue = true;
 			};
 		});
 		const contextMenu = Menu.buildFromTemplate(template);
 		contextMenu.popup(mainWindow);
 	});
 };
-appIpcOns["show-context-menu2"] = (app) => {
-	ipcMain.on("show-context-menu", (event) => {
+appIpcOns['show-context-menu2'] = (app) => {
+	ipcMain.on('show-context-menu', (event) => {
 		const menu = Menu.buildFromTemplate(menutemp);
-		console.log("menu", menu);
+		console.log('menu', menu);
 		menu.popup({ window: BrowserWindow.fromWebContents(event.sender) });
 	});
 };
-appIpcOns["show-notification"] = (app) => {
-	ipcMain.on("show-notification", (event, options) => {
+appIpcOns['show-notification'] = (app) => {
+	ipcMain.on('show-notification', (event, options) => {
 		// console.log("show-notification 如果通知成功但是啥也看不到，请检查系统通知权限");
 		// console.log("Notification.isSupported() : ", Notification.isSupported());
 		if (!Notification.isSupported() && !options) return;
 		const notification = new Notification({
-			title: options.title || "通知title",
-			subtitle: options.subtitle || "这是副标题subtitle",
-			body: options.body || "这是一条通知body",
+			title: options.title || '通知title',
+			subtitle: options.subtitle || '这是副标题subtitle',
+			body: options.body || '这是一条通知body',
 			// replyPlaceholder: "回复通知replyPlaceholder",
 			// sound: "", // 可选，通知声音文件
 			silent: false, // 可选，是否静音
@@ -320,85 +337,104 @@ appIpcOns["show-notification"] = (app) => {
 			// 	{ type: "button", text: "Hello" },
 			// 	{ type: "button", text: "world", title: "按钮2", action: "button2" },
 			// ], // 可选，通知操作 // 其他需求https://www.electronjs.org/zh/docs/latest/api/structures/notification-action
-			icon: path.join(__dirname, "icon.png"), // 可选，通知图标
+			icon: path.join(__dirname, 'icon.png') // 可选，通知图标
 		});
-		notification.on("show", () => console.log("用户点击了通知"));
-		notification.on("close", () => console.log("用户点击了通知"));
-		notification.on("click", () => options.callback);
-		notification.on("reply", (event, reply) => console.log("用户回复了通知:", reply));
+		notification.on('show', () => console.log('用户点击了通知'));
+		notification.on('close', () => console.log('用户点击了通知'));
+		notification.on('click', () => options.callback);
+		notification.on('reply', (event, reply) =>
+			console.log('用户回复了通知:', reply)
+		);
 
 		notification.show();
 	});
 };
-appIpcHandles["notification:show"] = (app) => {
-	ipcMain.handle("notification:show", (event, options) => {
-		console.log("show-notification 如果通知成功但是啥也看不到，请检查系统通知权限");
-		console.log("Notification.isSupported() : ", Notification.isSupported());
+appIpcHandles['notification:show'] = (app) => {
+	ipcMain.handle('notification:show', (event, options) => {
+		console.log(
+			'show-notification 如果通知成功但是啥也看不到，请检查系统通知权限'
+		);
+		console.log(
+			'Notification.isSupported() : ',
+			Notification.isSupported()
+		);
 		if (!Notification.isSupported() && !options) return;
 		const notification = new Notification({
-			title: options.title || "通知title",
-			subtitle: options.subtitle || "这是副标题subtitle",
-			body: options.body || "这是一条通知body",
+			title: options.title || '通知title',
+			subtitle: options.subtitle || '这是副标题subtitle',
+			body: options.body || '这是一条通知body',
 			// sound: "", // 可选，通知声音文件
 			silent: false, // 可选，是否静音
 			// urgency: low, //linux
 			// timeoutType: 'default' 或 'never'. // win linux
 			// closeButtonText: "关闭closeButtonText",
 			hasReply: options.hasReply || false, // 可选，是否显示回复按钮
-			replyPlaceholder: options.replyPlaceholder || "回复通知replyPlaceholder",
+			replyPlaceholder:
+				options.replyPlaceholder || '回复通知replyPlaceholder',
 			// NotificationAction: [
 			// 	{ type: "button", text: "Hello" },
 			// 	{ type: "button", text: "world", title: "按钮2", action: "button2" },
 			// ], // 可选，通知操作 // 其他需求https://www.electronjs.org/zh/docs/latest/api/structures/notification-action
-			icon: path.join(__dirname, "icon.png"), // 可选，通知图标
+			icon: path.join(__dirname, 'icon.png') // 可选，通知图标
 		});
-		notification.on("show", () => mainWindow.webContents.send("notification-show"));
-		notification.on("close", () => mainWindow.webContents.send("notification-close"));
-		notification.on("click", () => mainWindow.webContents.send("notification-click"));
-		notification.on("reply", (reply) => mainWindow.webContents.send("notification-reply", reply));
+		notification.on('show', () =>
+			mainWindow.webContents.send('notification-show')
+		);
+		notification.on('close', () =>
+			mainWindow.webContents.send('notification-close')
+		);
+		notification.on('click', () =>
+			mainWindow.webContents.send('notification-click')
+		);
+		notification.on('reply', (reply) =>
+			mainWindow.webContents.send('notification-reply', reply)
+		);
 		notification.show();
 	});
 };
 
 // MARK handles
-winIpcHandles["dialog:showOpenDialog"] = (win) => {
-	ipcMain.handle("dialog:showOpenDialog", async (event, options) => {
+winIpcHandles['dialog:showOpenDialog'] = (win) => {
+	ipcMain.handle('dialog:showOpenDialog', async (event, options) => {
 		const { filePaths } = await dialog.showOpenDialog(win, options || null);
 		return filePaths;
 	});
 };
-winIpcHandles["dialog:showSaveDialog"] = (win) => {
-	ipcMain.handle("dialog:showSaveDialog", async (event, options) => {
+winIpcHandles['dialog:showSaveDialog'] = (win) => {
+	ipcMain.handle('dialog:showSaveDialog', async (event, options) => {
 		const { filePath } = await dialog.showSaveDialog(win, options);
 		return filePath;
 	});
 };
-winIpcHandles["dialog:showMessageBox"] = (win) => {
-	ipcMain.handle("dialog:showMessageBox", async (event, options) => {
+winIpcHandles['dialog:showMessageBox'] = (win) => {
+	ipcMain.handle('dialog:showMessageBox', async (event, options) => {
 		return await dialog.showMessageBox(win, options);
 	});
 };
-winIpcHandles["dialog:showCertificateTrustDialog"] = (win) => {
-	ipcMain.handle("dialog:showCertificateTrustDialog", async (event, options) => {
-		return await dialog.showCertificateTrustDialog(win, options);
-	});
+winIpcHandles['dialog:showCertificateTrustDialog'] = (win) => {
+	ipcMain.handle(
+		'dialog:showCertificateTrustDialog',
+		async (event, options) => {
+			return await dialog.showCertificateTrustDialog(win, options);
+		}
+	);
 };
-winIpcHandles["dialog:showErrorBox"] = (win) => {
-	ipcMain.handle("dialog:showErrorBox", async (event, title, content) => {
+winIpcHandles['dialog:showErrorBox'] = (win) => {
+	ipcMain.handle('dialog:showErrorBox', async (event, title, content) => {
 		dialog.showErrorBox(title, content);
 		return void 0;
 	});
 };
-winIpcHandles["dialog:showAboutBox"] = (win) => {
-	ipcMain.handle("dialog:showAboutBox", async () => {
+winIpcHandles['dialog:showAboutBox'] = (win) => {
+	ipcMain.handle('dialog:showAboutBox', async () => {
 		return await showAboutBox(win);
 	});
 };
-winIpcHandles["menu:showVibrancyMenu"] = (win) => {
-	ipcMain.handle("menu:showVibrancyMenu", async () => {
+winIpcHandles['menu:showVibrancyMenu'] = (win) => {
+	ipcMain.handle('menu:showVibrancyMenu', async () => {
 		createVibrancyMenu().popup({ window: win }); //// return vibrancy; // 返回当前窗口的 vibrancy
 		return new Promise((resolve) => {
-			ipcMain.once("menu:vibrancy-updated", (_, newVibrancy) => {
+			ipcMain.once('menu:vibrancy-updated', (_, newVibrancy) => {
 				resolve(newVibrancy);
 			});
 		});
@@ -406,37 +442,37 @@ winIpcHandles["menu:showVibrancyMenu"] = (win) => {
 };
 
 // MARK Ons
-winIpcOns["preview-file"] = (win) => {
-	ipcMain.on("preview-file", (event, filePath) => {
+winIpcOns['preview-file'] = (win) => {
+	ipcMain.on('preview-file', (event, filePath) => {
 		win.previewFile(filePath); //macos only 快速预览
 	});
 };
-winIpcOns["set-zoom-level"] = (win) => {
-	ipcMain.on("set-zoom-level", (event, level) => {
+winIpcOns['set-zoom-level'] = (win) => {
+	ipcMain.on('set-zoom-level', (event, level) => {
 		win.webContents.setZoomLevel(level);
 	});
 };
-winIpcOns["get-zoom-level"] = (win) => {
-	ipcMain.on("get-zoom-level", (event, level) => {
-		console.log("get-zoom-level", event, level);
+winIpcOns['get-zoom-level'] = (win) => {
+	ipcMain.on('get-zoom-level', (event, level) => {
+		console.log('get-zoom-level', event, level);
 		const zoomLevel = win.webContents.getZoomLevel();
-		event.reply("zoom-level-reply", zoomLevel);
+		event.reply('zoom-level-reply', zoomLevel);
 	});
 };
-winIpcOns["set-zoom-factor"] = (win) => {
-	ipcMain.on("set-zoom-factor", (event, level) => {
+winIpcOns['set-zoom-factor'] = (win) => {
+	ipcMain.on('set-zoom-factor', (event, level) => {
 		win.webContents.setZoomFactor(level);
 	});
 };
-winIpcOns["get-zoom-factor"] = (win) => {
-	ipcMain.on("get-zoom-factor", (event, level) => {
-		console.log("get-zoom-factor", event, level);
+winIpcOns['get-zoom-factor'] = (win) => {
+	ipcMain.on('get-zoom-factor', (event, level) => {
+		console.log('get-zoom-factor', event, level);
 		const zoomFactor = win.webContents.getZoomFactor();
-		event.reply("zoom-factor-reply", zoomFactor);
+		event.reply('zoom-factor-reply', zoomFactor);
 	});
 };
-winIpcOns["toggle-traffic-light"] = (win) => {
-	ipcMain.on("toggle-traffic-light", (event, show) => {
+winIpcOns['toggle-traffic-light'] = (win) => {
+	ipcMain.on('toggle-traffic-light', (event, show) => {
 		if (show) {
 			win.setWindowButtonVisibility(true); // 显示默认的 traffic light
 		} else {
@@ -444,20 +480,20 @@ winIpcOns["toggle-traffic-light"] = (win) => {
 		}
 	}); // Traffic light 红绿灯显示隐藏
 };
-winIpcOns["hide-traffic-light"] = (win) => {
-	ipcMain.on("hide-traffic-light", (event, show) => {
-		console.log("hide-traffic-light", event, show);
+winIpcOns['hide-traffic-light'] = (win) => {
+	ipcMain.on('hide-traffic-light', (event, show) => {
+		console.log('hide-traffic-light', event, show);
 		win.setWindowButtonVisibility(false); // 隐藏默认的 traffic light
 	});
 };
-winIpcOns["show-traffic-light"] = (win) => {
-	ipcMain.on("show-traffic-light", (event, show) => {
-		console.log("show-traffic-light", event, show);
+winIpcOns['show-traffic-light'] = (win) => {
+	ipcMain.on('show-traffic-light', (event, show) => {
+		console.log('show-traffic-light', event, show);
 		win.setWindowButtonVisibility(true); // 显示默认的 traffic light
 	});
 };
-winIpcOns["get-electron-window-info"] = (win) => {
-	ipcMain.on("get-electron-window-info", (event) => {
+winIpcOns['get-electron-window-info'] = (win) => {
+	ipcMain.on('get-electron-window-info', (event) => {
 		const windowInfo = {
 			id: win.id,
 			width: win.getSize()[0],
@@ -465,22 +501,26 @@ winIpcOns["get-electron-window-info"] = (win) => {
 			isMaximized: win.isMaximized(),
 			isMinimized: win.isMinimized(),
 			isFocused: win.isFocused(),
-			isVisible: win.isVisible(),
+			isVisible: win.isVisible()
 			// 你可以根据需要添加更多信息
 		};
-		event.reply("window-info", windowInfo);
+		event.reply('window-info', windowInfo);
 	}); // 获取窗口信息
 };
 
 // MARK 具体实现
 // 读取与保存窗口状态
 function loadWindowState() {
-	const userDataPath = app.getPath("userData");
-	const windowStatePath = path.join(userDataPath, "window-state.json");
+	const userDataPath = app.getPath('userData');
+	const windowStatePath = path.join(userDataPath, 'window-state.json');
+	if (!fs.existsSync(windowStatePath)) {
+		console.log('初次使用app,生成空状态');
+		fs.writeFileSync(windowStatePath, '{}');
+	}
 	try {
-		const data = fs.readFileSync(windowStatePath, "utf8");
+		const data = fs.readFileSync(windowStatePath, 'utf8');
 		if (!data) {
-			console.log("初次使用app,生成空状态");
+			console.log('初次使用app,生成空状态');
 		}
 		return JSON.parse(data);
 	} catch (err) {
@@ -489,8 +529,8 @@ function loadWindowState() {
 	}
 }
 function saveWindowState(window) {
-	const userDataPath = app.getPath("userData");
-	const windowStatePath = path.join(userDataPath, "window-state.json");
+	const userDataPath = app.getPath('userData');
+	const windowStatePath = path.join(userDataPath, 'window-state.json');
 	const state = {
 		x: window.getBounds().x, // x: window.getPosition()[0],
 		y: window.getBounds().y, // y: window.getPosition()[1],
@@ -502,57 +542,73 @@ function saveWindowState(window) {
 		isDevToolsOpened: window.webContents.isDevToolsOpened(),
 		isAlwaysOnTop: window.isAlwaysOnTop(),
 		isVisible: window.isVisible(),
-		vibrancy: vibrancy,
+		vibrancy: vibrancy
 	};
 	// console.log("[save state]", state);
 	fs.writeFileSync(windowStatePath, JSON.stringify(state));
 }
 // 创建 vibrancy 菜单
-const vibrancyTypes = [null, "titlebar", "selection", "menu", "popover", "sidebar", "header", "sheet", "window", "hud", "fullscreen-ui", "tooltip", "content", "under-window", "under-page"];
+const vibrancyTypes = [
+	null,
+	'titlebar',
+	'selection',
+	'menu',
+	'popover',
+	'sidebar',
+	'header',
+	'sheet',
+	'window',
+	'hud',
+	'fullscreen-ui',
+	'tooltip',
+	'content',
+	'under-window',
+	'under-page'
+];
 function createVibrancyMenu() {
 	const vibrancyMenu = Menu.buildFromTemplate(
 		vibrancyTypes.map((type) => ({
-			label: type ? type : "null",
-			type: "radio",
+			label: type ? type : 'null',
+			type: 'radio',
 			checked: type === vibrancy,
 			click: () => {
 				mainWindow.setVibrancy(type);
 				vibrancy = type;
 				createVibrancyMenu(); // 更新菜单以反映新的 vibrancy 设置
-				ipcMain.emit("menu:vibrancy-updated", null, vibrancy);
-			},
+				ipcMain.emit('menu:vibrancy-updated', null, vibrancy);
+			}
 		}))
 	);
 	return vibrancyMenu;
 }
 async function showAboutBox(mainWindow) {
 	return await dialog.showMessageBox(mainWindow, {
-		title: "moko",
-		message: "Moko Editor",
-		detail: `version: 0.0.1\nelectron:${process.versions.electron}\nchromium:${process.versions.chrome}\nnode:${process.versions.node}\nv8:${process.versions.v8}\nOS:${process.platform}`,
+		title: 'moko',
+		message: 'Moko Editor',
+		detail: `version: 0.0.1\nelectron:${process.versions.electron}\nchromium:${process.versions.chrome}\nnode:${process.versions.node}\nv8:${process.versions.v8}\nOS:${process.platform}`
 	});
 }
 
 // MARK 获取系统信息
 function getInfo() {
 	const appPath = app.getAppPath();
-	const homePath = app.getPath("home");
-	const appDataPath = app.getPath("appData");
-	const userDataPath = app.getPath("userData");
-	const sessionDataPath = app.getPath("sessionData");
-	const tempPath = app.getPath("temp");
-	const exePath = app.getPath("exe");
-	const modulePath = app.getPath("module");
-	const desktopPath = app.getPath("desktop");
-	const documentsPath = app.getPath("documents");
-	const downloadsPath = app.getPath("downloads");
-	const musicPath = app.getPath("music");
-	const picturesPath = app.getPath("pictures");
-	const videosPath = app.getPath("videos");
-	const recentPath = isWin ? app.getPath("recent") : null; //windows only
-	const logPath = app.getPath("logs");
-	const crashDumpsPath = app.getPath("crashDumps");
-	const windowStatePath = path.join(userDataPath, "window-state.json");
+	const homePath = app.getPath('home');
+	const appDataPath = app.getPath('appData');
+	const userDataPath = app.getPath('userData');
+	const sessionDataPath = app.getPath('sessionData');
+	const tempPath = app.getPath('temp');
+	const exePath = app.getPath('exe');
+	const modulePath = app.getPath('module');
+	const desktopPath = app.getPath('desktop');
+	const documentsPath = app.getPath('documents');
+	const downloadsPath = app.getPath('downloads');
+	const musicPath = app.getPath('music');
+	const picturesPath = app.getPath('pictures');
+	const videosPath = app.getPath('videos');
+	const recentPath = isWin ? app.getPath('recent') : null; //windows only
+	const logPath = app.getPath('logs');
+	const crashDumpsPath = app.getPath('crashDumps');
+	const windowStatePath = path.join(userDataPath, 'window-state.json');
 	const paths = {
 		appPath,
 		homePath,
@@ -573,7 +629,7 @@ function getInfo() {
 		crashDumpsPath,
 		__dirname,
 		__filename,
-		windowStatePath,
+		windowStatePath
 	};
 	const locale = app.getLocale();
 	const systemLocale = app.getSystemLocale();
@@ -581,7 +637,7 @@ function getInfo() {
 	const language = {
 		locale,
 		systemLocale,
-		preferredSystemLanguages,
+		preferredSystemLanguages
 	};
 	const appMetrics = app.getAppMetrics();
 	// const GPUInfo = app.getGPUInfo("basic"); //basic complete 这个会报错
@@ -596,7 +652,7 @@ function getInfo() {
 		// systemIdleState,
 		systemIdleTime,
 		currentThermalState,
-		isOnBattery,
+		isOnBattery
 	};
 
 	const creationTime = process.getCreationTime();
@@ -614,7 +670,7 @@ function getInfo() {
 		// processMemoryInfo,
 		systemMemoryInfo,
 		systemVersion,
-		CPUUsage,
+		CPUUsage
 	};
 	const processProperties = {
 		defaultApp: process.defaultApp,
@@ -626,15 +682,15 @@ function getInfo() {
 		ppid: process.ppid,
 		uptime: process.uptime(),
 		versions: process.versions,
-		version: process.version,
+		version: process.version
 		// env: process.env,  // 会报错
 	};
 
-	ipcMain.on("app:getPaths", (event) => {
+	ipcMain.on('app:getPaths', (event) => {
 		event.returnValue = paths;
 		// event.sender.send("getPaths", paths);
 	});
-	ipcMain.on("app:getInfo", (event) => {
+	ipcMain.on('app:getInfo', (event) => {
 		event.returnValue = {
 			paths,
 			language,
@@ -645,14 +701,16 @@ function getInfo() {
 			badgeCount,
 			loginItemSettings,
 			processInfo,
-			processProperties,
+			processProperties
 		};
 	});
 }
 
 // MARK 安装 devtools 插件
 async function installExtensions() {
-	const { default: installExtension, REACT_DEVELOPER_TOOLS } = require("electron-devtools-installer");
+	const {
+		default: installExtension,
+		REACT_DEVELOPER_TOOLS
+	} = require('electron-devtools-installer');
 	await installExtension(REACT_DEVELOPER_TOOLS);
 }
-
