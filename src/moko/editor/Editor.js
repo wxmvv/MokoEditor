@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // BUG
 // 1.拼音框会到处飘 https://github.com/electron/electron/issues/4539 IEM
@@ -60,6 +59,7 @@ import { tokyoNightDay } from "@ddietr/codemirror-themes/tokyo-night-day";
 // 自定义高亮样式
 import { tags } from "@lezer/highlight";
 import { HighlightStyle, defaultHighlightStyle } from "@codemirror/language";
+import { isUntitledPath } from "../utils/fileDraft.js";
 const markdownHighlightStyle = HighlightStyle.define([
 	{ tag: tags.heading1, class: "md-h1" }, // 为标题添加自定义 class
 	{ tag: tags.heading2, class: "md-h2" },
@@ -205,8 +205,7 @@ export class Editor6 {
 		}
 		// 设置新文件
 		if (item.path === this.file?.path) return console.log("[editor] same file"); // 如果打开文件就是当前文件 直接返回
-		if (item.path === "untitled") (this.file = null), console.log("[editor] new untitled file"); // 如果是未命名标题的新文件
-		else this.file = item; // 否则设置当前文件
+		this.file = item;
 		// TODO 根据文件后缀名设置解析模式 this.setMode(CodeMirror.findModeByFileName(item.name)?.mode || "markdown"); // 设定解析模式
 
 		if (this._fileCache[item.path]) {
@@ -214,7 +213,7 @@ export class Editor6 {
 		} // 打开之前存储过状态的文件
 		else {
 			const newFileState = EditorState.create({
-				doc: value,
+				doc: value || "",
 				extensions: [
 					mokoBasicSetup, // basicSetup(),
 					this.basicDynamicState(),
@@ -222,10 +221,11 @@ export class Editor6 {
 			});
 			this.cm.setState(newFileState);
 			this._fileCache[item.path] = { ...this.saveEditorState(this.cm) };
-			this._fileValueCache[item.path] = value;
+			this._fileValueCache[item.path] = value || "";
 			this.setModified(this.isModified(this._fileValueCache[item.path], this.cm));
 		}
 		this.file = item;
+		this.view.file = item;
 		this.moko.workspace.trigger("editor-file-change", this);
 	} //cmState
 	// MARK config lineWrapping Theme this.scrollPastEnd ? scrollPastEnd() : []
@@ -273,8 +273,40 @@ export class Editor6 {
 	isModified(valueCache, cm) {
 		return valueCache !== cm.state.doc.toString();
 	}
-	setSaved(value) {
-		this._fileValueCache[this.view.file.path] = value;
+	getValue() {
+		return this.cm.state.doc.toString();
+	}
+	getValueForFile(filePath) {
+		if (!filePath) return "";
+		if (this.view.file?.path === filePath) return this.getValue();
+		const cachedState = this._fileCache[filePath];
+		if (cachedState?.doc && typeof cachedState.doc.toString === "function") return cachedState.doc.toString();
+		if (typeof this._fileValueCache[filePath] === "string") return this._fileValueCache[filePath];
+		return "";
+	}
+	replaceFilePath(oldPath, nextFile, value = this.getValue()) {
+		if (!oldPath || !nextFile?.path) return;
+		if (oldPath !== nextFile.path) {
+			if (this._fileCache[oldPath]) {
+				this._fileCache[nextFile.path] = this._fileCache[oldPath];
+				delete this._fileCache[oldPath];
+			}
+			if (Object.prototype.hasOwnProperty.call(this._fileValueCache, oldPath)) {
+				this._fileValueCache[nextFile.path] = this._fileValueCache[oldPath];
+				delete this._fileValueCache[oldPath];
+			}
+		}
+		if (this.file?.path === oldPath || isUntitledPath(oldPath)) {
+			this.file = nextFile;
+			this.view.file = nextFile;
+			this._fileCache[nextFile.path] = { ...this.saveEditorState(this.cm) };
+		}
+		this._fileValueCache[nextFile.path] = value;
+	}
+	setSaved(value, file = this.view.file) {
+		if (!file?.path) return;
+		this._fileValueCache[file.path] = value;
+		this._fileCache[file.path] = { ...this.saveEditorState(this.cm) };
 		this.setModified(false);
 	}
 	setModified(mod) {

@@ -1,14 +1,15 @@
 import Events from "../model/Events";
+import Adapter from "./adapter/Adapter";
 
 class FileManager extends Events {
 	constructor(adapter) {
 		super();
-		this.adapter = adapter;
+		this.adapter = adapter || new Adapter();
 		// Library
 		this.library = null;
 		this.libraryPaths = [];
 		this.libraryName = "Library";
-		this.fileMap = adapter.fileMap || null;
+		this.fileMap = this.adapter.fileMap || null;
 		// config
 		this.configTs = 0; //配置文件时间戳
 		this.config = {}; // this.configDir = "moko"; //配置文件夹名// this.userConfigDir = "~/.config/" + this.configDir;
@@ -44,12 +45,14 @@ class FileManager extends Events {
 	// MARK BTN addLocation & showOpenDialog
 	async addLocation(paths) {
 		if (!paths) return;
+		if (!this.adapter?.addRootPaths) return;
 		this.adapter.addRootPaths(paths);
 		this.addPathsToLibrary(paths);
 		this.trigger("file-map-update", this.adapter.fileMap);
 	}
 	async removeLocation(path) {
 		if (!path) return;
+		if (!this.adapter?.removeRootPath) return;
 		this.adapter.removeRootPath(path);
 		this.removePathFromLibrary(path);
 		this.trigger("file-map-update", this.adapter.fileMap);
@@ -131,6 +134,7 @@ class FileManager extends Events {
 	setLibraryState(libraryJsonRaw) {
 		if (libraryJsonRaw) this.library = libraryJsonRaw;
 		console.log("[FileManager] setLibraryState:", this.library);
+		if (!this.adapter?.addRootPaths || !libraryJsonRaw?.folders) return;
 		const paths = libraryJsonRaw.folders.map((folder) => folder.path);
 		this.adapter.addRootPaths(paths, () => this.trigger("file-map-update", this.adapter.fileMap));
 	}
@@ -147,19 +151,32 @@ class FileManager extends Events {
 	// MARK Editor
 	// 保存文件
 	async saveFile(file, data, options, withBinary = false) {
+		if (!file) return;
 		await this.adapter.write(file, data, options, withBinary); // this.adapter.saveFile(file, data, options);
 	}
 	// 打开文件
 	async openFile(filePath) {
+		if (!filePath) return "";
 		return await this.adapter.read(filePath);
 	}
 
 	readDir() {}
-	createFile() {}
+	async createFile(filePath, data = "", options, withBinary = false) {
+		if (!filePath) return;
+		return await this.adapter.write(filePath, data, options, withBinary);
+	}
 	deleteFile() {}
 	renameFile() {}
 	moveFile() {}
 	getUserPath() {}
+	async exists(path, sensitive) {
+		if (!path) return false;
+		return await this.adapter.exists(path, sensitive);
+	}
+	async mkdir(path) {
+		if (!path) return;
+		return await this.adapter.mkdir(path);
+	}
 }
 
 export default FileManager;

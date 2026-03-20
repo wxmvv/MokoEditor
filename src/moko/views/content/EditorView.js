@@ -1,5 +1,6 @@
 import { Editor6 } from "../../editor/Editor.js";
 import FileView from "../../model/FileView.js";
+import { isUntitledPath } from "../../utils/fileDraft.js";
 
 const EDITOR_VIEW_TYPE = "editor";
 const editor_view_icon_name = "editor";
@@ -39,7 +40,7 @@ export class EditorView extends FileView {
 		// console.log("Editor View setFile", item, cmState);
 		this.file = item;
 		let value;
-		if (item.path === "untitled") value = "";
+		if (isUntitledPath(item.path)) value = "";
 		else value = await this.moko.FileManager.openFile(item.path);
 		this.editor.setFile(item, value, cmState);
 	}

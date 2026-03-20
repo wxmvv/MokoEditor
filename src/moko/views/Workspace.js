@@ -2,6 +2,7 @@ import Sidebar from "./workspace/Sidebar";
 import EditorView from "./content/EditorView";
 import Pane from "./workspace/Pane";
 import Events from "../model/Events";
+import { getFileNameFromPath, isUntitledPath } from "../utils/fileDraft.js";
 
 import { testInitPaneState, welcomeInitPaneState, emptyInitPaneState, untitledInitPaneState } from "./workspace/Pane";
 
@@ -122,7 +123,9 @@ class Workspace extends Events {
 		return panes_state;
 	}
 	async _createPanes(panesState) {
-		await panesState.forEach(async (paneState) => await this._createPane(paneState));
+		for (const paneState of panesState) {
+			await this._createPane(paneState);
+		}
 		return this._panes;
 	}
 	async _createPane(paneState) {
@@ -191,28 +194,53 @@ class Workspace extends Events {
 
 	// TODO 待完善
 	async save() {
-		// console.log(this.activePane, this.activeEditor);
-		// console.log(this.activeEditor.file.path, this.activeEditor.cm.state.doc.toString(), {});
-		const filepath = this.activeEditor.file.path;
-		const value = this.activeEditor.cm.state.doc.toString();
-		const options = {};
-		const withBinary = false;
-		await this.moko.FileManager.saveFile(filepath, value, options, withBinary).then(() => {
-			this.activeEditor.setModified(false);
-			this.activeEditor.setSaved(value);
+		if (!this.activeEditor?.file?.path) return false;
+		const currentFile = this.activeEditor.file;
+		const value = this.activeEditor.getValue();
+		if (isUntitledPath(currentFile.path)) {
+			return await this.saveActiveFileAs(currentFile, value);
+		}
+		await this.moko.FileManager.saveFile(currentFile.path, value, {}, false);
+		this.activeEditor.setSaved(value, currentFile);
+		return true;
+	}
+	async saveActiveFileAs(file = this.activeEditor?.file, value = this.activeEditor?.getValue?.()) {
+		if (!file) return false;
+		const defaultPath = file.name?.endsWith(".md") ? file.name : `${file.name || "未命名文档"}.md`;
+		const savePath = await this.moko.FileManager.showSaveDialog({
+			properties: ["showHiddenFiles", "createDirectory", "showOverwriteConfirmation"],
+			message: "Save File Location",
+			defaultPath,
 		});
+		if (!savePath) return false;
+
+		const savedFile = {
+			...file,
+			path: savePath,
+			name: getFileNameFromPath(savePath),
+			type: "editor",
+			modified: false,
+		};
+
+		await this.moko.FileManager.saveFile(savePath, value || "", {}, false);
+		this.activePane?.replaceTabFile(file.path, savedFile);
+		this.activeEditor.replaceFilePath(file.path, savedFile, value || "");
+		this.activeEditor.setSaved(value || "", savedFile);
+		this.trigger("file-saved-as", savedFile);
+		return true;
 	}
 	async openWelcome() {
 		const file = { path: "welcome", name: "欢迎", type: "welcome" };
 		await this.openFile(file);
 	}
 	async newUntitledTextFile() {
-		console.log("workspace.newUntitledTextFile");
-		const file = { path: "untitled", name: "未命名文档", type: "editor" };
-		await this.openFile(file);
+		if (this.activePane) return await this.activePane.newFile();
+		const pane = await this._createPane(emptyInitPaneState);
+		this._setActivePane(pane, { focus: false });
+		return await pane.newFile();
 	}
 	async newFile() {
-		this.activePane.newFile();
+		return await this.newUntitledTextFile();
 	}
 	_getActiveFileView() {
 		const activeView = this.activeView;

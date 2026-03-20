@@ -1,10 +1,11 @@
 import Events from "../../model/Events";
 import FileView from "../../model/FileView";
+import { createUntitledFile, getFileNameFromPath, isUntitledPath } from "../../utils/fileDraft.js";
 
 export const welcomeInitPaneState = { tabs: [{ name: "欢迎", path: "welcome", type: "welcome" }], currentTabPath: "welcome" };
 export const testInitPaneState = { tabs: [{ name: "测试", path: "test", type: "test" }], currentTabPath: "test" };
 export const emptyInitPaneState = { tabs: [], currentTabPath: null };
-export const untitledInitPaneState = { tabs: [{ name: "未命名文档", path: "untitled", type: "editor" }], currentTabPath: "untitled" };
+export const untitledInitPaneState = { tabs: [{ name: "未命名文档", path: "untitled:1", type: "editor" }], currentTabPath: "untitled:1" };
 
 export class Pane extends Events {
 	constructor(parent, id) {
@@ -30,25 +31,23 @@ export class Pane extends Events {
 
 	async setState(pane_state) {
 		// console.log("[pane] setState:", pane_state);
-		if (!pane_state || !pane_state.tabs || !pane_state.tabs.length === 0) return;
+		if (!pane_state || !Array.isArray(pane_state.tabs)) return;
 		pane_state.tabs.filter((tab) => !this.moko.ViewRegistry.getTypeByExtension(getFileExtension(tab.path)));
 		const tabs = pane_state.tabs;
+		if (tabs.length === 0) return;
 		const currentTabPath = pane_state.currentTabPath || tabs[0]?.path;
 		for (const tab of tabs) {
-			if (tab.path === currentTabPath) {
-				const result = this.openFile(tab);
-				if (result === "openWithDefaultApp") console.log("openWithDefaultApp 不需要添加tab");
-				else this.addTab(tab);
-			}
 			this.addTab(tab);
 		}
-		if (!this.currentTabPath) {
-			this.openFile(tabs[0]);
-		}
 		this.addTabBar();
+		await this.openFile(tabs.find((tab) => tab.path === currentTabPath) || tabs[0]);
 	}
 
-	newFile() {}
+	async newFile() {
+		const file = createUntitledFile(this.tabs);
+		await this.openFile(file);
+		return file;
+	}
 
 	async openFile(file, openState) {
 		if (!file) return;
@@ -57,7 +56,7 @@ export class Pane extends Events {
 		if (!file.extension) file.extension = getFileExtension(file.path);
 		if (!file.name) file.name = extractFileName(file.path);
 		if (file.path === "welcome") viewType = "welcome";
-		else if (file.path === "untitled") viewType = "editor";
+		else if (isUntitledPath(file.path)) viewType = "editor";
 		else if (file.path === "test") viewType = "test";
 		else if (file.path === "empty") viewType = "empty";
 		else viewType = this.moko.ViewRegistry.getTypeByExtension(file.extension) || null;
@@ -99,7 +98,7 @@ export class Pane extends Events {
 	}
 	// MARK 如果是FileView 则加载FileView.seFile()
 	async setFile(file) {
-		if (this.view instanceof FileView) this.view.setFile(file);
+		if (this.view instanceof FileView) await this.view.setFile(file);
 		this.trigger("file-change", this);
 	}
 	// async saveFile() {
@@ -260,10 +259,10 @@ export class Pane extends Events {
 		this.currentTabPath = file.path;
 		this._updateTabs();
 	}
-	selectTab(file) {
+	async selectTab(file) {
 		if (!this.tabs.find((tab) => tab.path === file.path)) this.tabs.push(file);
 		this.currentTabPath = file.path;
-		this.openFile(file);
+		await this.openFile(file);
 		this._updateTabs();
 	}
 	addTab(file) {
@@ -277,20 +276,36 @@ export class Pane extends Events {
 	}
 
 	async _showSaveDialog() {
-		this.moko.FileManager.showSaveDialog();
+		return await this.moko.FileManager.showSaveDialog();
 	}
 	async _showSaveConfirmDialog() {
-		this.moko.FileManager.showSaveConfirmDialog();
+		return await this.moko.FileManager.showSaveConfirmDialog();
+	}
+	replaceTabFile(oldPath, nextFile) {
+		const tab = this.tabs.find((item) => item.path === oldPath);
+		if (!tab) return;
+		Object.assign(tab, nextFile);
+		tab.name = nextFile.name || getFileNameFromPath(nextFile.path);
+		tab.path = nextFile.path;
+		tab.modified = false;
+		if (this.currentTabPath === oldPath) this.currentTabPath = nextFile.path;
+		this._updateTabs();
 	}
 
 	async closeTabByIndex(index) {
-		if (this.tabs[index].modified) {
+		let tab = this.tabs[index];
+		if (!tab) return;
+		if (tab.modified) {
 			// DOING 这里是保存的逻辑 未来要放在其他地方
-			const tab = this.tabs[index];
 			console.log("[pane] tab is modified, can't close, show save dialog");
-			if (tab.path === "untitled" || tab.path === untitled) {
-				const savePath = await this._showSaveDialog();
-				if (savePath) this.moko.FileManager.saveFile(savePath, tab.content);
+			if (tab.path !== this.currentTabPath) {
+				await this.selectTab(tab);
+				tab = this.tabs.find((item) => item.path === this.currentTabPath) || tab;
+			}
+			if (isUntitledPath(tab.path)) {
+				const didSave = await this.workspace.save();
+				if (!didSave) return;
+				tab = this.tabs[index] || this.tabs.find((item) => !isUntitledPath(item.path) && item.name === tab.name) || tab;
 			} else {
 				const options = {
 					title: "save file",
@@ -303,7 +318,8 @@ export class Pane extends Events {
 				const res = await this.moko.FileManager.showMessageBox(options);
 				// const res = await this.moko.adapter.showAboutBox();
 				if (res.response === 0) {
-					console.log("保存文件"); //TODO 保存文件
+					const didSave = await this.workspace.save();
+					if (!didSave) return;
 				} else if (res.response === 1) {
 					console.log("不保存文件"); //TODO 不保存文件
 				} else if (res.response === 2) return; //取消
@@ -311,10 +327,14 @@ export class Pane extends Events {
 			}
 			// DOING
 		}
-		this.tabs.splice(index, 1); //删除操作
+		const currentIndex = this.tabs.findIndex((item) => item.path === tab.path);
+		if (currentIndex === -1) return;
+		this.tabs.splice(currentIndex, 1); //删除操作
 		if (this.tabs.length !== 0) {
-			if (index >= this.tabs.length) index = this.tabs.length - 1;
-			this.selectTab(this.tabs[index]);
+			const nextIndex = currentIndex >= this.tabs.length ? this.tabs.length - 1 : currentIndex;
+			await this.selectTab(this.tabs[nextIndex]);
+		} else {
+			this.currentTabPath = null;
 		}
 		this._updateTabs();
 	}
