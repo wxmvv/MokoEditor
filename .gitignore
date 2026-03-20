@@ -34,3 +34,4 @@ android
 dist
 electron-build
 codemirror-5.65.17
+test
