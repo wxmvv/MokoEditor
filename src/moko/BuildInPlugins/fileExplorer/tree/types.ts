@@ -287,7 +287,7 @@ export interface DraggingPositionRoot extends AbstractDraggingPosition {
 }
 
 export interface ControlledTreeEnvironmentProps<T = any, C extends string = never> extends TreeEnvironmentConfiguration<T, C> {
-	children?: JSX.Element | (JSX.Element | null)[] | null;
+	children?: React.ReactNode;
 }
 
 export interface UncontrolledTreeEnvironmentProps<T = any, C extends string = never> extends TreeRenderProps<T, C>, TreeCapabilities, ImplicitDataSource<T>, TreeChangeHandlers<T> {
@@ -295,7 +295,7 @@ export interface UncontrolledTreeEnvironmentProps<T = any, C extends string = ne
 	keyboardBindings?: KeyboardBindings;
 	liveDescriptors?: LiveDescriptors;
 	getItemTitle: (item: TreeItem<T>) => string;
-	children: JSX.Element | (JSX.Element | null)[] | null;
+	children: React.ReactNode;
 	disableMultiselect?: boolean;
 }
 
